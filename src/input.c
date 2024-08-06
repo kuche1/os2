@@ -179,6 +179,14 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
         // 77 right arrow
         case 78:
             return (err_or_char_t) {.err = false, .data = '+'};
+        // 79 end
+        // 80 down arrow
+        // 81 page down
+        // 82 insert
+        // 83 delete
+        // 84 85 86 no idea
+        // 87 f11
+        // 88 f12
     }
     return (err_or_char_t) {.err = true, .data = 0};
 }
