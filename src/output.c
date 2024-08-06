@@ -71,6 +71,7 @@ void out$terminal_cycle_visible_colors(void){
 void out$clear_last_char(void){
 	if(out$terminal_column <= 0){
 		// shit is fucked
+		// TODO this actually needs to be implemented, and it would be cool as well if we could (and we can) reverse the colors as well
 		return;
 	}
 

@@ -245,9 +245,6 @@ char in$ch(void){
 
 // }
 
-// TODO I would like to make this more interactive,
-// explaining to the user that there is not eough space
-// in the buffer, and that he needs to edit the line
 void in$line(arr_char_t * line){
 
     while(true){
@@ -267,20 +264,16 @@ void in$line(arr_char_t * line){
             continue;
         }
 
-        out$ch(ch);
-
         err_t err = arr$char$push(line, ch);
 
         if(err){
-
-            // TODO it sucks that we have to do this
-            // we could make this better when we implement
-            // backspace handling
-
-            out$nl();
-
-            break;
+            // TODO I would like to make this more interactive,
+            // explaining to the user that there is not eough space
+            // in the buffer, and that he needs to edit the line
+            continue;
         }
+
+        out$ch(ch);
 
     }
 
