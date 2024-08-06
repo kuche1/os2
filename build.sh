@@ -22,4 +22,4 @@ cp "$HERE/myos.bin" "$HERE/isodir/boot/myos.bin"
 cp "$HERE/grub.cfg" "$HERE/isodir/boot/grub/grub.cfg"
 grub-mkrescue -o "$HERE/myos.iso" "$HERE/isodir" # sudo pacman -S libisoburn
 
-# qemu-system-i386 -cdrom myos.iso
+qemu-system-i386 -cdrom myos.iso
