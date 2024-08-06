@@ -6,18 +6,26 @@
 // try and debug the issue with 2 letter commands
 // by compiling with gcc and adding a define that
 // lets the program use the regular printf
+//
+// cursor
+//
+// command history
+
+#define shell$CMD_NEXT_COLOR "nec"
+#define shell$CMD_PREVIOUS_COLOR "prc"
+#define shell$CMD_TEST1 "test"
+#define shell$CMD_TEST2 "tes"
 
 void shell$main(void){
 
     out$cstr("Welcome to ligma shell\n");
     out$cstr("\n");
 
-	// TODO reutrn code
-	// TODO history of commands
-
 	err_t last_command_return_code = err$OK;
 
 	while(true){
+
+		out$nl();
 
 		out$ch('[');
 		out$err(last_command_return_code);
@@ -27,16 +35,16 @@ void shell$main(void){
 		arr$INIT(char, cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
 
-		out$cstr("you just entered: `");
-		out$str(cmd);
-		out$ch('`');
-		out$nl();
+		// out$cstr("you just entered: `");
+		// out$str(cmd);
+		// out$ch('`');
+		// out$nl();
 
-		out$cstr("length: ");
-		out$size(cmd->len);
-		out$nl();
+		// out$cstr("length: ");
+		// out$size(cmd->len);
+		// out$nl();
 
-		if(arr$char$same_as$cstr(cmd, "nec")){
+		if(arr$char$same_as$cstr(cmd, shell$CMD_NEXT_COLOR)){
 			// TODO after I enter an invalid command this refuses to get recognised
 			// if I switch this and `test`, the "nc" again gets ignored
 			//
@@ -44,22 +52,36 @@ void shell$main(void){
 
 			out$terminal_next_visible_color();
 
-		}else if(arr$char$same_as$cstr(cmd, "prc")){
+		}else if(arr$char$same_as$cstr(cmd, shell$CMD_PREVIOUS_COLOR)){
 
 			out$terminal_previous_visible_color();
 
-		}else if(arr$char$same_as$cstr(cmd, "test")){
+		}else if(arr$char$same_as$cstr(cmd, shell$CMD_TEST1)){
 
 			out$cstr("test 12345\n");
 
-		}else if(arr$char$same_as$cstr(cmd, "tes")){
+		}else if(arr$char$same_as$cstr(cmd, shell$CMD_TEST2)){
 
 			out$cstr("ts 54543543\n");
 
 		}else{
 
-			out$cstr("unknown command\n");
 			last_command_return_code = err$ERR;
+
+			out$cstr("unknown command: `");
+			out$str(cmd);
+			out$cstr("`\n");
+
+			out$cstr("list of commands:\n");
+			out$cstr(shell$CMD_NEXT_COLOR);
+			out$nl();
+			out$cstr(shell$CMD_PREVIOUS_COLOR);
+			out$nl();
+			out$cstr(shell$CMD_TEST1);
+			out$nl();
+			out$cstr(shell$CMD_TEST2);
+			out$nl();
+			
 			continue;
 
 		}
