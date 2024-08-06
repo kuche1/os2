@@ -81,7 +81,8 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
             return (err_or_char_t) {.err = false, .data = '-'};
         case 13:
             return (err_or_char_t) {.err = false, .data = '='};
-        // case 14: // backspace
+        case 14: // backspace
+            return (err_or_char_t) {.err = false, .data = '\b'};
         // case 15: // tab
         case 16:
             return (err_or_char_t) {.err = false, .data = 'q'};
@@ -253,13 +254,22 @@ void in$line(arr_char_t * line){
 
         char ch = in$ch();
 
-        out$ch(ch);
-
         if(ch == '\n'){
+            out$nl();
             break;
         }
 
-        err_t err = arr$push_char(line, ch);
+        if(ch == '\b'){
+            if(line->len > 0){
+                arr$char$del_last(line);
+                out$clear_last_char();
+            }
+            continue;
+        }
+
+        out$ch(ch);
+
+        err_t err = arr$char$push(line, ch);
 
         if(err){
 

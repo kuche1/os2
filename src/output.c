@@ -68,6 +68,17 @@ void out$terminal_cycle_visible_colors(void){
 	}
 }
 
+void out$clear_last_char(void){
+	if(out$terminal_column <= 0){
+		// shit is fucked
+		return;
+	}
+
+	out$terminal_column -= 1;
+
+	out$terminal_putentryat(' ', 0, out$terminal_column, out$terminal_row);
+}
+
 void out$nl(void){
 
 	out$terminal_column = 0;

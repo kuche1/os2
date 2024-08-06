@@ -39,13 +39,24 @@ typedef struct{
     size_t cap;
 }arr_char_t;
 
-err_t arr$push_char(arr_char_t * arr, char data){
+err_t arr$char$push(arr_char_t * arr, char data){
     if(arr->len >= arr->cap){
         return true;
     }
     arr->data[arr->len++] = data;
     return false;
 }
+
+// no need to make things more complicated by
+// indicating if the arr was already empty
+void arr$char$del_last(arr_char_t * arr){
+    if(arr->len <= 0){
+        return;
+    }
+    arr->len -= 1;
+}
+
+// TODO del_char
 
 // ///
 // ////// string
