@@ -17,6 +17,7 @@ typedef enum{
 	out$VGA_COLOR_LIGHT_MAGENTA = 13,
 	out$VGA_COLOR_LIGHT_BROWN = 14,
 	out$VGA_COLOR_WHITE = 15,
+	out$VGA_COLOR_LEN,
 }out$vag_color_t;
 
 inline uint8_t out$vga_entry_color(out$vag_color_t fg, out$vag_color_t bg){
@@ -57,12 +58,31 @@ void out$terminal_putentryat(char c, uint8_t color, size_t x, size_t y){
 	out$terminal_buffer[index] = out$vga_entry(c, color);
 }
 
+void out$terminal_cycle_visible_colors(void){
+	out$terminal_color += 1;
+	if(out$terminal_color >= out$VGA_COLOR_LEN){
+		out$terminal_color = 0;
+	}
+	if(out$terminal_color == out$VGA_COLOR_BLACK){
+		out$terminal_color += 1;
+	}
+}
+
 void out$nl(void){
+
 	out$terminal_column = 0;
 	out$terminal_row += 1;
+
 	if(out$terminal_row == out$VGA_HEIGHT){
 		out$terminal_row = 0;
+		out$terminal_cycle_visible_colors();
 	}
+
+	// clear the new line
+	for(int i=0; i<out$VGA_WIDTH; ++i){
+		out$terminal_putentryat(' ', 0, i, out$terminal_row);
+	}
+
 }
 
 void out$ch(char ch){

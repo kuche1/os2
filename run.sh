@@ -22,7 +22,7 @@ grub-file --is-x86-multiboot "$FOLDER_RELEASE/myos.bin" # sudo pacman -S grub
 
 rm -rf "$FOLDER_ISO"
 mkdir -p "$FOLDER_ISO/boot/grub"
-mv "$FOLDER_RELEASE/myos.bin" "$FOLDER_ISO/boot/myos.bin"
+cp "$FOLDER_RELEASE/myos.bin" "$FOLDER_ISO/boot/myos.bin"
 cp "$FOLDER_BOOT/grub.cfg" "$FOLDER_ISO/boot/grub/grub.cfg"
 grub-mkrescue -o "$FOLDER_RELEASE/myos.iso" "$FOLDER_ISO" # sudo pacman -S libisoburn
 

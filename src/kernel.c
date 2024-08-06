@@ -6,6 +6,7 @@
 #include "generic.c"
 #include "output.c"
 #include "input.c"
+#include "shell.c"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -21,19 +22,6 @@ void kernel_main(void){
 
 	out$terminal_initialise();
 
-	out$cstr("Hello, kernel World!\n");
-	out$cstr("asdfg\n");
-
-	while(true){
-
-		out$cstr("Enter some input: \n");
-
-		char entered = in$ch();
-
-		out$cstr("You just entered: ");
-		out$ch(entered);
-		out$ch('\n');
-
-	}
+	shell$main();
 
 }

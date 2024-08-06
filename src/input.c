@@ -78,3 +78,7 @@ char in$ch(void){
         }
     }
 }
+
+// void in$cstr(char * data, size_t data_len){
+
+// }
