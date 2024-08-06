@@ -157,6 +157,28 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
             return (err_or_char_t) {.err = false, .data = '.'};
         case 53:
             return (err_or_char_t) {.err = false, .data = '/'};
+        // case 54: // right shift
+        case 55:
+            return (err_or_char_t) {.err = false, .data = '*'};
+        // case 56: // alt
+        case 57:
+            return (err_or_char_t) {.err = false, .data = ' '};
+        // case 58: // caps lock
+        // 59 f1
+        // ...
+        // 68 f10
+        // 69 num lock
+        // 70 scroll lock
+        // 71 home
+        // 72 up arrow
+        // 73 page up
+        case 74:
+            return (err_or_char_t) {.err = false, .data = '-'};
+        // 75 left arrow
+        // 76 no dea
+        // 77 right arrow
+        case 78:
+            return (err_or_char_t) {.err = false, .data = '+'};
     }
     return (err_or_char_t) {.err = true, .data = 0};
 }
