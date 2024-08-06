@@ -168,3 +168,11 @@ void out$str(arr_char_t * str){
 		out$ch(str->data[i]);
 	}
 }
+
+void out$err(err_t err){
+	if(err){
+		out$cstr("err");
+	}else{
+		out$cstr("ok");
+	}
+}

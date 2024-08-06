@@ -9,9 +9,14 @@ void shell$main(void){
 	// TODO reutrn code
 	// TODO history of commands
 
+	err_t last_command_return_code = err$OK;
+
 	while(true){
 
-		out$cstr("> ");
+		out$ch('[');
+		out$err(last_command_return_code);
+
+		out$cstr("] > ");
 
 		arr$INIT(char, cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
@@ -26,7 +31,11 @@ void shell$main(void){
 			out$terminal_previous_visible_color();
 		}else{
 			out$cstr("unknown command\n");
+			last_command_return_code = err$ERR;
+			continue;
 		}
+
+		last_command_return_code = err$OK;
 
 	}
 

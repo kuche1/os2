@@ -5,6 +5,9 @@
 
 typedef bool err_t;
 
+#define err$OK false
+#define err$ERR true
+
 // unpack `err_or_<type>_t`
 #define UNP(var_err, type, var_data, fnc) \
     bool var_err; \
