@@ -18,14 +18,14 @@ typedef enum{
 	out$VGA_COLOR_LIGHT_BROWN = 14,
 	out$VGA_COLOR_WHITE = 15,
 	out$VGA_COLOR_LEN,
-}out$vag_color_t;
+}out$vga_color_t;
 
-inline uint8_t out$vga_entry_color(out$vag_color_t fg, out$vag_color_t bg){
-	return fg | bg << 4;
+inline uint8_t out$vga_entry_color(out$vga_color_t fg, out$vga_color_t bg){
+	return (uint8_t) (fg | bg << 4);
 }
 
 inline uint16_t out$vga_entry(unsigned char uc, uint8_t color){
-	return (uint16_t) uc | (uint16_t) color << 8;
+	return (uint16_t) ( (uint16_t) uc | (uint16_t) color << 8 );
 }
 
 const size_t out$VGA_WIDTH = 80;
@@ -53,9 +53,9 @@ void out$terminal_setcolor(uint8_t color){
 	out$terminal_color = color;
 }
 
-void out$terminal_putentryat(char c, uint8_t color, size_t x, size_t y){
+void out$terminal_putentryat(char ch, uint8_t color, size_t x, size_t y){
 	const size_t index = y * out$VGA_WIDTH + x;
-	out$terminal_buffer[index] = out$vga_entry(c, color);
+	out$terminal_buffer[index] = out$vga_entry((unsigned char) ch, color);
 }
 
 void out$terminal_cycle_visible_colors(void){
@@ -79,7 +79,7 @@ void out$nl(void){
 	}
 
 	// clear the new line
-	for(int i=0; i<out$VGA_WIDTH; ++i){
+	for(size_t i=0; i<out$VGA_WIDTH; ++i){
 		out$terminal_putentryat(' ', 0, i, out$terminal_row);
 	}
 

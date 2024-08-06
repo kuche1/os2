@@ -24,4 +24,6 @@ void kernel_main(void){
 
 	shell$main();
 
+	out$cstr("You can now unplug your machine");
+
 }
