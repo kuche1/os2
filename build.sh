@@ -16,10 +16,13 @@ i686-elf-gcc -T "$HERE/linker.ld" -o "$HERE/myos.bin" -ffreestanding -O2 -nostdl
 
 grub-file --is-x86-multiboot "$HERE/myos.bin" # sudo pacman -S grub
 
-rm -rf "$HERE/isodir"
-mkdir -p "$HERE/isodir/boot/grub"
-cp "$HERE/myos.bin" "$HERE/isodir/boot/myos.bin"
-cp "$HERE/grub.cfg" "$HERE/isodir/boot/grub/grub.cfg"
-grub-mkrescue -o "$HERE/myos.iso" "$HERE/isodir" # sudo pacman -S libisoburn
+FOLDER_RELEASE="$HERE/release"
+FOLDER_ISO="$FOLDER_RELEASE/iso"
+
+rm -rf "$FOLDER_ISO"
+mkdir -p "$FOLDER_ISO/boot/grub"
+cp "$HERE/myos.bin" "$FOLDER_ISO/boot/myos.bin"
+cp "$HERE/grub.cfg" "$FOLDER_ISO/boot/grub/grub.cfg"
+grub-mkrescue -o "$FOLDER_RELEASE/myos.iso" "$FOLDER_ISO" # sudo pacman -S libisoburn
 
 qemu-system-i386 -cdrom myos.iso
