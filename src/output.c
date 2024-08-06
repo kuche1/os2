@@ -35,7 +35,7 @@ size_t out$terminal_column;
 uint8_t out$terminal_color;
 uint16_t* out$terminal_buffer;
 
-void out$terminal_initialize(void){
+void out$terminal_initialise(void){
 	out$terminal_row = 0;
 	out$terminal_column = 0;
 	out$terminal_color = out$vga_entry_color(out$VGA_COLOR_LIGHT_GREY, out$VGA_COLOR_BLACK);
@@ -57,7 +57,7 @@ void out$terminal_putentryat(char c, uint8_t color, size_t x, size_t y){
 	out$terminal_buffer[index] = out$vga_entry(c, color);
 }
 
-void out$print_nl(void){
+void out$nl(void){
 	out$terminal_column = 0;
 	out$terminal_row += 1;
 	if(out$terminal_row == out$VGA_HEIGHT){
@@ -65,11 +65,11 @@ void out$print_nl(void){
 	}
 }
 
-void out$print_ch(char ch){
+void out$ch(char ch){
 
 	if(ch == '\n'){
 
-		out$print_nl();
+		out$nl();
 
 	}else{
 
@@ -77,24 +77,24 @@ void out$print_ch(char ch){
 
 		out$terminal_column += 1;
 		if(out$terminal_column == out$VGA_WIDTH){
-			out$print_nl();
+			out$nl();
 		}
 
 	}
 
 }
 
-void out$print_cstr(const char * data){
+void out$cstr(const char * data){
 	char ch;
 	while(ch = *data++){
-		out$print_ch(ch);
+		out$ch(ch);
 	}
 }
 
-void out$print_str(const str_t str){
+void out$str(const str_t str){
 	size_t len = str.len;
 
 	while(len--){
-		out$print_ch(str.data[len]);
+		out$ch(str.data[len]);
 	}
 }

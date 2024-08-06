@@ -19,20 +19,20 @@
 
 void kernel_main(void){
 
-	out$terminal_initialize();
+	out$terminal_initialise();
 
-	out$print_cstr("Hello, kernel World!\n");
-	out$print_cstr("asdfg\n");
+	out$cstr("Hello, kernel World!\n");
+	out$cstr("asdfg\n");
 
 	while(true){
 
-		out$print_cstr("Enter some input: \n");
+		out$cstr("Enter some input: \n");
 
 		char entered = getch();
 
-		out$print_cstr("You just entered: ");
-		out$print_ch(entered);
-		out$print_ch('\n');
+		out$cstr("You just entered: ");
+		out$ch(entered);
+		out$ch('\n');
 
 	}
 
