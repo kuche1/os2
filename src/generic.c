@@ -56,6 +56,34 @@ void arr$char$del_last(arr_char_t * arr){
     arr->len -= 1;
 }
 
+bool arr$char$same_as$cstr(arr_char_t * arr, char * cstr){
+
+    size_t idx = 0;
+
+    for(;; idx+=1){
+
+        char c_ch = cstr[idx];
+
+        bool last_c = c_ch == 0;
+        bool last_arr = arr->len == idx;
+
+        if(last_c != last_arr){
+            return false;
+        }
+
+        char arr_ch = arr->data[idx];
+
+        if(c_ch != arr_ch){
+            return false;
+        }
+
+        if(last_c && last_arr){
+            return true;
+        }
+    }
+
+}
+
 // TODO del_char
 
 // ///

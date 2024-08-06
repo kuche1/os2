@@ -58,14 +58,30 @@ void out$terminal_putentryat(char ch, uint8_t color, size_t x, size_t y){
 	out$terminal_buffer[index] = out$vga_entry((unsigned char) ch, color);
 }
 
-void out$terminal_cycle_visible_colors(void){
+void out$terminal_next_visible_color(void){
+
 	out$terminal_color += 1;
+
 	if(out$terminal_color >= out$VGA_COLOR_LEN){
 		out$terminal_color = 0;
 	}
+
 	if(out$terminal_color == out$VGA_COLOR_BLACK){
 		out$terminal_color += 1;
 	}
+
+}
+
+void out$terminal_previous_visible_color(void){
+
+	if(out$terminal_color > 0){
+		out$terminal_color -= 1;
+	}else{
+		out$terminal_color = out$VGA_COLOR_LEN - 1;
+	}
+
+	// we don't need to check for black since it really is 0
+
 }
 
 void out$clear_last_char(void){
@@ -87,7 +103,7 @@ void out$nl(void){
 
 	if(out$terminal_row == out$VGA_HEIGHT){
 		out$terminal_row = 0;
-		out$terminal_cycle_visible_colors();
+		out$terminal_next_visible_color();
 	}
 
 	// clear the new line
