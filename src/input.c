@@ -18,13 +18,13 @@
 #define in$KEYBOARD_STATUS_PORT 0x64
 #define in$KEYBOARD_STATUS_MASK_OUT_BUF 0x01
 
-static inline uint8_t in$inb(uint16_t port) {
+static inline uint8_t in$inb(uint16_t port){
     uint8_t ret;
     __asm__ __volatile__ ("inb %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
 }
 
-static inline void in$outb(uint16_t port, uint8_t val) {
+static inline void in$outb(uint16_t port, uint8_t val){
     __asm__ __volatile__ ("outb %0, %1" : : "a"(val), "Nd"(port));
 }
 
@@ -63,7 +63,7 @@ static char in$scancode_to_ascii[] = {
     0,  /* All other keys are undefined */
 };
 
-static inline char in$getch(void) {
+static inline char in$ch(void){
     uint8_t status;
     char keycode;
 
