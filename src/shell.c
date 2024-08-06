@@ -10,7 +10,7 @@ void shell$main(void){
 
 		out$cstr("> ");
 
-		arr$INIT(char, line, 90);
+		arr$INIT(char, line, 9999);
 		in$line(line);
 
 		out$cstr("you just entered: ");

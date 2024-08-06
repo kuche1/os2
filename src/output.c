@@ -85,13 +85,29 @@ void out$terminal_previous_visible_color(void){
 }
 
 void out$clear_last_char(void){
-	if(out$terminal_column <= 0){
-		// shit is fucked
-		// TODO this actually needs to be implemented, and it would be cool as well if we could (and we can) reverse the colors as well
-		return;
-	}
 
-	out$terminal_column -= 1;
+	if(out$terminal_column <= 0){
+
+		if(out$terminal_row <= 0){
+
+			out$terminal_previous_visible_color();
+
+			out$terminal_row = out$VGA_HEIGHT - 1;
+			out$terminal_column = out$VGA_WIDTH - 1;
+
+
+		}else{
+
+			out$terminal_row -= 1;
+			out$terminal_column = out$VGA_WIDTH - 1;
+
+		}
+
+	}else{
+
+		out$terminal_column -= 1;
+
+	}
 
 	out$terminal_putentryat(' ', 0, out$terminal_column, out$terminal_row);
 }
