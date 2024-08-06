@@ -59,7 +59,7 @@ void arr$char$del_last(arr_char_t * arr){
     arr->len -= 1;
 }
 
-bool arr$char$same_as$cstr(arr_char_t * arr, char * cstr){
+bool arr$char$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
     size_t idx = 0;
 

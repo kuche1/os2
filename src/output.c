@@ -176,3 +176,15 @@ void out$err(err_t err){
 		out$cstr("ok");
 	}
 }
+
+void out$size(size_t data){
+	size_t data_trimmed;
+	if(data >= 10){
+		data_trimmed = data % 10;
+		out$size(data / 10);
+	}else{
+		data_trimmed = data;
+	}
+	char ch = '0' + (char) data_trimmed;
+	out$ch(ch);
+}

@@ -25,6 +25,10 @@ void shell$main(void){
 		out$str(cmd);
 		out$nl();
 
+		out$cstr("length: ");
+		out$size(cmd->len);
+		out$nl();
+
 		if(arr$char$same_as$cstr(cmd, "nc")){
 			out$terminal_next_visible_color();
 		}else if(arr$char$same_as$cstr(cmd, "pc")){
