@@ -65,7 +65,7 @@ char in$scancode_to_ascii[] = {
 
 char in$ch(void){
     uint8_t status;
-    char keycode;
+    unsigned char keycode;
 
     // Wait for a key press
     while(true){
