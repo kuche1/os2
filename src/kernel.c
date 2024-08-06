@@ -31,8 +31,8 @@ void kernel_main(void){
 		char entered = getch();
 
 		print_cstr("You just entered: ");
-		terminal_putchar(entered);
-		terminal_putchar('\n');
+		print_ch(entered);
+		print_ch('\n');
 
 	}
 
