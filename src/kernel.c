@@ -21,16 +21,16 @@ void kernel_main(void){
 
 	terminal_initialize();
 
-	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("asdfg\n");
+	print_cstr("Hello, kernel World!\n");
+	print_cstr("asdfg\n");
 
 	while(true){
 
-		terminal_writestring("Enter some input: \n");
+		print_cstr("Enter some input: \n");
 
 		char entered = getch();
 
-		terminal_writestring("You just entered: ");
+		print_cstr("You just entered: ");
 		terminal_putchar(entered);
 		terminal_putchar('\n');
 

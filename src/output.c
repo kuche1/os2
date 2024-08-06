@@ -90,13 +90,13 @@ void terminal_write(const char * data, size_t size){
 	}
 }
 
-void terminal_writestring(const char * data){
+void print_cstr(const char * data){
 	char ch;
 	while(ch = *data++){
 		terminal_putchar(ch);
 	}
 }
 
-void terminal_write_string(const str_t str){
+void print_str(const str_t str){
 	terminal_write(str.data, str.len);
 }
