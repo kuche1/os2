@@ -19,16 +19,16 @@ typedef enum{
 	out$VGA_COLOR_WHITE = 15,
 }out$vag_color_t;
 
-static inline uint8_t out$vga_entry_color(out$vag_color_t fg, out$vag_color_t bg){
+inline uint8_t out$vga_entry_color(out$vag_color_t fg, out$vag_color_t bg){
 	return fg | bg << 4;
 }
 
-static inline uint16_t out$vga_entry(unsigned char uc, uint8_t color){
+inline uint16_t out$vga_entry(unsigned char uc, uint8_t color){
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
-static const size_t out$VGA_WIDTH = 80;
-static const size_t out$VGA_HEIGHT = 25;
+const size_t out$VGA_WIDTH = 80;
+const size_t out$VGA_HEIGHT = 25;
 
 size_t out$terminal_row;
 size_t out$terminal_column;
