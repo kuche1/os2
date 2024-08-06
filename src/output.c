@@ -111,10 +111,16 @@ void out$cstr(const char * data){
 	}
 }
 
-void out$str(const str_t str){
-	size_t len = str.len;
+// void out$str(const str_t str){
+// 	size_t len = str.len;
 
-	while(len--){
-		out$ch(str.data[len]);
+// 	while(len--){
+// 		out$ch(str.data[len]);
+// 	}
+// }
+
+void out$str(arr_char_t * str){
+	for(size_t i=0; i<str->len; ++i){
+		out$ch(str->data[i]);
 	}
 }

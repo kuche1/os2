@@ -3,7 +3,9 @@
 ////// error
 ///
 
-// unpack `err_or_char_t`
+typedef bool err_t;
+
+// unpack `err_or_<type>_t`
 #define UNP(var_err, type, var_data, fnc) \
     bool var_err; \
     type var_data; \
@@ -14,15 +16,42 @@
     }
 
 typedef struct{
-    bool err;
+    err_t err;
     char data;
 }err_or_char_t;
 
 ///
-////// string
+////// array
 ///
+
+#define arr$INIT(type, var_name, capacity) \
+    type ___ ## var_name ## _data [capacity]; \
+    arr_ ## type ## _t ___ ## var_name ## _struct = { \
+        .data = ___ ## var_name ## _data, \
+        .len = 0, \
+        .cap = capacity, \
+    }; \
+    arr_ ## type ## _t * var_name = & ___ ## var_name ## _struct;
 
 typedef struct{
     char * data;
     size_t len;
-}str_t;
+    size_t cap;
+}arr_char_t;
+
+err_t arr$push_char(arr_char_t * arr, char data){
+    if(arr->len >= arr->cap){
+        return true;
+    }
+    arr->data[arr->len++] = data;
+    return false;
+}
+
+// ///
+// ////// string
+// ///
+
+// typedef struct{
+//     char * data;
+//     size_t len;
+// }str_t;
