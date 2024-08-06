@@ -28,7 +28,7 @@ void kernel_main(void){
 
 		out$cstr("Enter some input: \n");
 
-		char entered = getch();
+		char entered = in$getch();
 
 		out$cstr("You just entered: ");
 		out$ch(entered);

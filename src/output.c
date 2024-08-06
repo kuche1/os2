@@ -86,7 +86,7 @@ void out$ch(char ch){
 
 void out$cstr(const char * data){
 	char ch;
-	while(ch = *data++){
+	while((ch = *data++)){
 		out$ch(ch);
 	}
 }

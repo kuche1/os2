@@ -14,21 +14,21 @@
 //    return ((char)inchar);
 // }
 
-#define KEYBOARD_DATA_PORT 0x60
-#define KEYBOARD_STATUS_PORT 0x64
-#define KEYBOARD_STATUS_MASK_OUT_BUF 0x01
+#define in$KEYBOARD_DATA_PORT 0x60
+#define in$KEYBOARD_STATUS_PORT 0x64
+#define in$KEYBOARD_STATUS_MASK_OUT_BUF 0x01
 
-static inline uint8_t inb(uint16_t port) {
+static inline uint8_t in$inb(uint16_t port) {
     uint8_t ret;
     __asm__ __volatile__ ("inb %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
 }
 
-static inline void outb(uint16_t port, uint8_t val) {
+static inline void in$outb(uint16_t port, uint8_t val) {
     __asm__ __volatile__ ("outb %0, %1" : : "a"(val), "Nd"(port));
 }
 
-static char scancode_to_ascii[] = {
+static char in$scancode_to_ascii[] = {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', /* Backspace */
     '\t', /* Tab */
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', /* Enter key */
@@ -63,17 +63,17 @@ static char scancode_to_ascii[] = {
     0,  /* All other keys are undefined */
 };
 
-static inline char getch(void) {
+static inline char in$getch(void) {
     uint8_t status;
     char keycode;
 
     // Wait for a key press
     while(true){
-        status = inb(KEYBOARD_STATUS_PORT);
-        if(status & KEYBOARD_STATUS_MASK_OUT_BUF){
-            keycode = inb(KEYBOARD_DATA_PORT);
-            if(keycode < sizeof(scancode_to_ascii)){
-                return scancode_to_ascii[keycode];
+        status = in$inb(in$KEYBOARD_STATUS_PORT);
+        if(status & in$KEYBOARD_STATUS_MASK_OUT_BUF){
+            keycode = in$inb(in$KEYBOARD_DATA_PORT);
+            if(keycode < sizeof(in$scancode_to_ascii)){
+                return in$scancode_to_ascii[keycode];
             }
         }
     }
