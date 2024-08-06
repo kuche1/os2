@@ -94,12 +94,19 @@ void terminal_putchar(char c){
 
 }
 
-void terminal_write(const char* data, size_t size){
+void terminal_write(const char * data, size_t size){
 	for(size_t i = 0; i < size; i++){
 		terminal_putchar(data[i]);
 	}
 }
 
-void terminal_writestring(const char* data){
-	terminal_write(data, strlen(data));
+void terminal_writestring(const char * data){
+	char ch;
+	while(ch = *data++){
+		terminal_putchar(ch);
+	}
+}
+
+void terminal_write_string(const str_t str){
+	terminal_write(str.data, str.len);
 }

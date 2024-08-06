@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "generic.c"
 #include "output.c"
 #include "input.c"
 
