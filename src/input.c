@@ -218,33 +218,6 @@ char in$ch(void){
     }
 }
 
-// #define in$LINE_MAXLEN 20
-
-// str_t in$str(void){
-
-//     arr$INIT(char, line, in$LINE_MAXLEN);
-
-//     while(true){
-
-//         char ch = in$ch();
-
-//         if(ch == '\n'){
-//             break;
-//         }
-
-//         err_t err = arr$push_char(line, ch);
-
-//         if(err){
-//             // TODO it sucks that we have to do this
-//             // we could make this better when we implement
-//             // backspace handling
-//             break;
-//         }
-
-//     }
-
-// }
-
 void in$line(arr_char_t * line){
 
     while(true){

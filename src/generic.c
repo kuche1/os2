@@ -71,29 +71,26 @@ bool arr$char$same_as$cstr(const arr_char_t * arr, const char * cstr){
         bool last_arr = arr->len == idx;
 
         if(last_c != last_arr){
+            // out$cstr("[dl]");
             return false;
         }
 
         char arr_ch = arr->data[idx];
 
         if(c_ch != arr_ch){
+            // out$cstr("[dc");
+            // out$cstr("<");
+            // out$ch(c_ch);
+            // out$ch(arr_ch);
+            // out$cstr(">");
+            // out$cstr("]");
             return false;
         }
 
         if(last_c && last_arr){
+            // out$cstr("[sc]");
             return true;
         }
     }
 
 }
-
-// TODO del_char
-
-// ///
-// ////// string
-// ///
-
-// typedef struct{
-//     char * data;
-//     size_t len;
-// }str_t;
