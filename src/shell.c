@@ -1,6 +1,12 @@
 
 #define shell$CMD_MAXLEN 50
 
+// TODO
+//
+// try and debug the issue with 2 letter commands
+// by compiling with gcc and adding a define that
+// lets the program use the regular printf
+
 void shell$main(void){
 
     out$cstr("Welcome to ligma shell\n");
