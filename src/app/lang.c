@@ -38,7 +38,7 @@ void lang$add_u32(uint32_t num){
     lang$set_u32(lang$get_u32() + num);
 }
 
-void lang$main(void){
+err_t lang$main(void){
 
     for(size_t i=0; i<LENOF(lang$mem); ++i){
         lang$mem[i] = 0;
@@ -68,7 +68,10 @@ void lang$main(void){
 
             case lang$INST_SET_PTR:{
                 uint32_t addr = code[++idx]; // possible out of bound
-                lang$set_mem_ptr(addr); // TODO this could return an error
+                err_t err = lang$set_mem_ptr(addr); // TODO this could return an error
+                if(err){
+                    return err;
+                }
             }break;
 
             case lang$INST_SET_U32:{
@@ -87,5 +90,7 @@ void lang$main(void){
 
         }
     }
+
+    return err$OK;
 
 }

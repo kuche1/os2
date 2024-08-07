@@ -73,7 +73,7 @@ void shell$main(void){
 
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_LANG)){
 
-			lang$main();
+			last_command_return_code = lang$main();
 
 		}else{
 
