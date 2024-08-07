@@ -62,7 +62,7 @@ get_new_input:
             if(arg == &a){
                 arg = &b;
             }else{
-                out$cstr("you can only use 1 operator at a time");
+                out$cstr("you can only use 1 operator at a time\n");
                 goto get_new_input;
             }
             continue;
