@@ -28,3 +28,10 @@ typedef struct{
 ///
 
 #include "array.c"
+
+///
+////// ...
+///
+
+#define LENOF(arr) \
+    ( sizeof(arr) / sizeof(*arr) )

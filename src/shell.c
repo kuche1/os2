@@ -1,5 +1,6 @@
 
 #include "app/calculator.c"
+#include "app/lang.c"
 
 #define shell$MAX_NUMBER_OF_COMMANDS 10
 #define shell$CMD_MAXLEN 50
@@ -15,6 +16,7 @@
 #define shell$CMD_TEST1 "test"
 #define shell$CMD_TEST2 "tes"
 #define shell$CMD_CALCULATOR "calc"
+#define shell$CMD_LANG "lang"
 
 void shell$main(void){
 
@@ -68,6 +70,10 @@ void shell$main(void){
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_CALCULATOR)){
 
 			last_command_return_code = calc$main();
+
+		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_LANG)){
+
+			lang$main();
 
 		}else{
 
