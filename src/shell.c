@@ -3,17 +3,12 @@
 
 // TODO
 //
-// try and debug the issue with 2 letter commands
-// by compiling with gcc and adding a define that
-// lets the program use the regular printf
-// UPDATE: the same issue just happened for the "test" command
-//
 // cursor
 //
 // command history
 
-#define shell$CMD_NEXT_COLOR "nec"
-#define shell$CMD_PREVIOUS_COLOR "prc"
+#define shell$CMD_NEXT_COLOR "nc"
+#define shell$CMD_PREVIOUS_COLOR "pc"
 #define shell$CMD_TEST1 "test"
 #define shell$CMD_TEST2 "tes"
 

@@ -71,9 +71,17 @@ bool arr$char$same_as$cstr(const arr_char_t * arr, const char * cstr){
         bool last_arr = arr->len == idx;
 
         if(last_c != last_arr){
+            // one is done and the other is not
             // out$cstr("[dl]");
             return false;
         }
+
+        if(last_c){
+            // they're both done
+            return true;
+        }
+
+        // they both are not done
 
         char arr_ch = arr->data[idx];
 
@@ -87,10 +95,6 @@ bool arr$char$same_as$cstr(const arr_char_t * arr, const char * cstr){
             return false;
         }
 
-        if(last_c && last_arr){
-            // out$cstr("[sc]");
-            return true;
-        }
     }
 
 }
