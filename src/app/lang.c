@@ -11,6 +11,14 @@ typedef struct{
     size_t mem_ptr;
 }lang$program_data_t;
 
+void lang$program_data_t$init(lang$program_data_t * ctx){
+    for(size_t i=0; i<LENOF(ctx->mem); ++i){
+        ctx->mem[i] = 0;
+    }
+
+    ctx->mem_ptr = 0;
+}
+
 inline err_t lang$set_mem_ptr(lang$program_data_t * ctx, size_t addr){
     // if(addr < 0){ // no need since addr is unsigned
     //     return err$ERR;
@@ -43,12 +51,7 @@ err_t lang$main(void){
 
     lang$program_data_t context;
     lang$program_data_t * ctx = & context;
-
-    for(size_t i=0; i<LENOF(ctx->mem); ++i){
-        ctx->mem[i] = 0;
-    }
-
-    ctx->mem_ptr = 0;
+    lang$program_data_t$init(ctx);
 
     uint32_t code[] = {
         lang$INST_SET_PTR,
