@@ -17,6 +17,7 @@
 #define shell$CMD_TEST2 "tes"
 #define shell$CMD_CALCULATOR "calc"
 #define shell$CMD_LANG "lang"
+#define shell$CMD_EXIT "exit"
 
 void shell$main(void){
 
@@ -75,6 +76,10 @@ void shell$main(void){
 
 			last_command_return_code = lang$main();
 
+		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_EXIT)){
+
+			break;
+
 		}else{
 
 			last_command_return_code = err$ERR;
@@ -93,6 +98,10 @@ void shell$main(void){
 			out$cstr(shell$CMD_TEST2);
 			out$nl();
 			out$cstr(shell$CMD_CALCULATOR);
+			out$nl();
+			out$cstr(shell$CMD_LANG);
+			out$nl();
+			out$cstr(shell$CMD_EXIT);
 			out$nl();
 
 		}
