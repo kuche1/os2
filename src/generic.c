@@ -23,6 +23,11 @@ typedef struct{
     char data;
 }err_or_char_t;
 
+typedef struct{
+    err_t err;
+    bool data;
+}err_or_bool_t;
+
 ///
 ////// array
 ///
