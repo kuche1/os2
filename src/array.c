@@ -19,6 +19,16 @@
         return err$OK; \
     }
 
+// no need to make things more complicated by
+// indicating if the arr was already empty
+#define arr$$GENERATE_FNC_DEL_LAST(type) \
+    void arr$ ## type ## $del_last(arr_ ## type * arr){ \
+        if(arr->len <= 0){ \
+            return; \
+        } \
+        arr->len -= 1; \
+    }
+
 ///
 ////// typedef missing types
 ///
@@ -56,14 +66,13 @@ arr$$GENERATE_STRUCT(char_t)
 // }
 arr$$GENERATE_FNC_PUSH(char_t)
 
-// no need to make things more complicated by
-// indicating if the arr was already empty
-void arr$char_t$del_last(arr_char_t * arr){
-    if(arr->len <= 0){
-        return;
-    }
-    arr->len -= 1;
-}
+// void arr$char_t$del_last(arr_char_t * arr){
+//     if(arr->len <= 0){
+//         return;
+//     }
+//     arr->len -= 1;
+// }
+arr$$GENERATE_FNC_DEL_LAST(char_t)
 
 bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
