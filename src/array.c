@@ -29,6 +29,11 @@
         arr->len -= 1; \
     }
 
+#define arr$$GENERATE_ALL(type) \
+    arr$$GENERATE_STRUCT(type) \
+    arr$$GENERATE_FNC_PUSH(type) \
+    arr$$GENERATE_FNC_DEL_LAST(type)
+
 ///
 ////// typedef missing types
 ///
@@ -38,7 +43,7 @@
 typedef char char_t;
 
 ///
-////// ...
+////// init
 ///
 
 #define arr$INIT(type, var_name, capacity) \
@@ -50,29 +55,35 @@ typedef char char_t;
     }; \
     arr_ ## type * var_name = & ___ ## var_name ## _struct;
 
-// typedef struct{
-//     char * data;
-//     size_t len;
-//     size_t cap;
-// }arr_char_t;
-arr$$GENERATE_STRUCT(char_t)
+///
+////// char_t
+///
 
-// err_t arr$char_t$push(arr_char_t * arr, char data){
-//     if(arr->len >= arr->cap){
-//         return true;
-//     }
-//     arr->data[arr->len++] = data;
-//     return false;
-// }
-arr$$GENERATE_FNC_PUSH(char_t)
+// // typedef struct{
+// //     char * data;
+// //     size_t len;
+// //     size_t cap;
+// // }arr_char_t;
+// arr$$GENERATE_STRUCT(char_t)
 
-// void arr$char_t$del_last(arr_char_t * arr){
-//     if(arr->len <= 0){
-//         return;
-//     }
-//     arr->len -= 1;
-// }
-arr$$GENERATE_FNC_DEL_LAST(char_t)
+// // err_t arr$char_t$push(arr_char_t * arr, char data){
+// //     if(arr->len >= arr->cap){
+// //         return true;
+// //     }
+// //     arr->data[arr->len++] = data;
+// //     return false;
+// // }
+// arr$$GENERATE_FNC_PUSH(char_t)
+
+// // void arr$char_t$del_last(arr_char_t * arr){
+// //     if(arr->len <= 0){
+// //         return;
+// //     }
+// //     arr->len -= 1;
+// // }
+// arr$$GENERATE_FNC_DEL_LAST(char_t)
+
+arr$$GENERATE_ALL(char_t)
 
 bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
@@ -87,7 +98,6 @@ bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
         if(last_c != last_arr){
             // one is done and the other is not
-            // out$cstr("[dl]");
             return false;
         }
 
@@ -101,15 +111,15 @@ bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
         char arr_ch = arr->data[idx];
 
         if(c_ch != arr_ch){
-            // out$cstr("[dc");
-            // out$cstr("<");
-            // out$ch(c_ch);
-            // out$ch(arr_ch);
-            // out$cstr(">");
-            // out$cstr("]");
             return false;
         }
 
     }
 
 }
+
+///
+////// arr_char_t
+///
+
+arr$$GENERATE_STRUCT(arr_char_t)
