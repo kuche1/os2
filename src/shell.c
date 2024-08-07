@@ -6,6 +6,7 @@
 // try and debug the issue with 2 letter commands
 // by compiling with gcc and adding a define that
 // lets the program use the regular printf
+// UPDATE: the same issue just happened for the "test" command
 //
 // cursor
 //
@@ -45,10 +46,6 @@ void shell$main(void){
 		// out$nl();
 
 		if(arr$char$same_as$cstr(cmd, shell$CMD_NEXT_COLOR)){
-			// TODO after I enter an invalid command this refuses to get recognised
-			// if I switch this and `test`, the "nc" again gets ignored
-			//
-			// it seems that this is a problem with all 2-length commands
 
 			out$terminal_next_visible_color();
 
