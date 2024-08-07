@@ -188,3 +188,11 @@ void out$size(size_t data){
 	char ch = '0' + (char) data_trimmed;
 	out$ch(ch);
 }
+
+void out$int(int num){
+	if(num < 0){
+		out$ch('-');
+		out$int(-num); // TODO overflow/underflow possible ?
+	}
+	out$size((size_t) num);
+}

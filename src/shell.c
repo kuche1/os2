@@ -38,6 +38,8 @@ void shell$main(void){
 		arr$INIT(char_t, cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
 
+		last_command_return_code = err$OK;
+
 		// out$cstr("you just entered: `");
 		// out$str(cmd);
 		// out$ch('`');
@@ -65,7 +67,7 @@ void shell$main(void){
 
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_CALCULATOR)){
 
-			calc$main();
+			last_command_return_code = calc$main();
 
 		}else{
 
@@ -86,12 +88,8 @@ void shell$main(void){
 			out$nl();
 			out$cstr(shell$CMD_CALCULATOR);
 			out$nl();
-			
-			continue;
 
 		}
-
-		last_command_return_code = err$OK;
 
 	}
 

@@ -85,6 +85,22 @@ typedef char char_t;
 
 arr$$GENERATE_ALL(char_t)
 
+err_or_char_t arr$char_t$pop_head(arr_char_t * arr){
+    if(arr->len <= 0){
+        return (err_or_char_t) {.err = err$ERR, .data = 0};
+    }
+    
+    char ch = arr->data[0];
+
+    for(size_t i=0; i+1<arr->len; ++i){
+        arr->data[i] = arr->data[i+1];
+    }
+
+    arr->len -= 1;
+
+    return (err_or_char_t) {.err = err$OK, .data = ch};
+}
+
 bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
     size_t idx = 0;
