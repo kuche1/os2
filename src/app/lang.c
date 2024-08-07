@@ -1,9 +1,14 @@
 
+// would be super cool if we could make it so that each instruction is an
+// "offset" in an array of function pointers, so that we can execute the
+// function right away without any ifs or buts
+
 typedef enum{
     lang$INST_SET_PTR,
     lang$INST_SET_U32,
     lang$INST_PUT_CHAR,
     lang$INST_ADD_U32,
+    // lang$INST_GET_CHAR,
 }lang$instruction_t;
 
 typedef struct{
