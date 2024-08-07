@@ -1,7 +1,26 @@
 
+///
+////// struct/fnc generators
+///
+
+#define arr$$GENERATE_STRUCT(type) \
+    typedef struct{ \
+        type * data; \
+        size_t len; \
+        size_t cap; \
+    } arr_ ## type
+
+///
+////// typedef missing types
+///
+
 // typedef the types that don't end with `_t`
 // so that we can make arrays of them
 typedef char char_t;
+
+///
+////// ...
+///
 
 #define arr$INIT(type, var_name, capacity) \
     type ___ ## var_name ## _data [capacity]; \
@@ -12,11 +31,12 @@ typedef char char_t;
     }; \
     arr_ ## type * var_name = & ___ ## var_name ## _struct;
 
-typedef struct{
-    char * data;
-    size_t len;
-    size_t cap;
-}arr_char_t;
+// typedef struct{
+//     char * data;
+//     size_t len;
+//     size_t cap;
+// }arr_char_t;
+arr$$GENERATE_STRUCT(char_t);
 
 err_t arr$char_t$push(arr_char_t * arr, char data){
     if(arr->len >= arr->cap){
