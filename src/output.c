@@ -80,7 +80,7 @@ void out$terminal_previous_visible_color(void){
 		out$terminal_color = out$VGA_COLOR_LEN - 1;
 	}
 
-	// we don't need to check for black since it really is 0
+	// we don't need to check for black since it's is 0
 
 }
 
