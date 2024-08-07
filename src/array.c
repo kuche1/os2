@@ -8,7 +8,16 @@
         type * data; \
         size_t len; \
         size_t cap; \
-    } arr_ ## type
+    } arr_ ## type;
+
+#define arr$$GENERATE_FNC_PUSH(type) \
+    err_t arr$ ## type ## $push(arr_ ## type * arr, type data){ \
+        if(arr->len >= arr->cap){ \
+            return err$ERR; \
+        } \
+        arr->data[arr->len++] = data; \
+        return err$OK; \
+    }
 
 ///
 ////// typedef missing types
@@ -36,15 +45,16 @@ typedef char char_t;
 //     size_t len;
 //     size_t cap;
 // }arr_char_t;
-arr$$GENERATE_STRUCT(char_t);
+arr$$GENERATE_STRUCT(char_t)
 
-err_t arr$char_t$push(arr_char_t * arr, char data){
-    if(arr->len >= arr->cap){
-        return true;
-    }
-    arr->data[arr->len++] = data;
-    return false;
-}
+// err_t arr$char_t$push(arr_char_t * arr, char data){
+//     if(arr->len >= arr->cap){
+//         return true;
+//     }
+//     arr->data[arr->len++] = data;
+//     return false;
+// }
+arr$$GENERATE_FNC_PUSH(char_t)
 
 // no need to make things more complicated by
 // indicating if the arr was already empty
