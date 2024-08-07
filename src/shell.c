@@ -1,4 +1,6 @@
 
+#include "app/calculator.c"
+
 #define shell$MAX_NUMBER_OF_COMMANDS 10
 #define shell$CMD_MAXLEN 50
 
@@ -12,6 +14,7 @@
 #define shell$CMD_PREVIOUS_COLOR "pc"
 #define shell$CMD_TEST1 "test"
 #define shell$CMD_TEST2 "tes"
+#define shell$CMD_CALCULATOR "calc"
 
 void shell$main(void){
 
@@ -60,6 +63,10 @@ void shell$main(void){
 
 			out$cstr("ts 54543543\n");
 
+		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_CALCULATOR)){
+
+			calc$main();
+
 		}else{
 
 			last_command_return_code = err$ERR;
@@ -76,6 +83,8 @@ void shell$main(void){
 			out$cstr(shell$CMD_TEST1);
 			out$nl();
 			out$cstr(shell$CMD_TEST2);
+			out$nl();
+			out$cstr(shell$CMD_CALCULATOR);
 			out$nl();
 			
 			continue;
