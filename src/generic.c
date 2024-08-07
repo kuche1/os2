@@ -27,14 +27,18 @@ typedef struct{
 ////// array
 ///
 
+// typedef the types that don't end with `_t`
+// so that we can make arrays of them
+typedef char char_t;
+
 #define arr$INIT(type, var_name, capacity) \
     type ___ ## var_name ## _data [capacity]; \
-    arr_ ## type ## _t ___ ## var_name ## _struct = { \
+    arr_ ## type ___ ## var_name ## _struct = { \
         .data = ___ ## var_name ## _data, \
         .len = 0, \
         .cap = capacity, \
     }; \
-    arr_ ## type ## _t * var_name = & ___ ## var_name ## _struct;
+    arr_ ## type * var_name = & ___ ## var_name ## _struct;
 
 typedef struct{
     char * data;
@@ -42,7 +46,7 @@ typedef struct{
     size_t cap;
 }arr_char_t;
 
-err_t arr$char$push(arr_char_t * arr, char data){
+err_t arr$char_t$push(arr_char_t * arr, char data){
     if(arr->len >= arr->cap){
         return true;
     }
@@ -52,14 +56,14 @@ err_t arr$char$push(arr_char_t * arr, char data){
 
 // no need to make things more complicated by
 // indicating if the arr was already empty
-void arr$char$del_last(arr_char_t * arr){
+void arr$char_t$del_last(arr_char_t * arr){
     if(arr->len <= 0){
         return;
     }
     arr->len -= 1;
 }
 
-bool arr$char$same_as$cstr(const arr_char_t * arr, const char * cstr){
+bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 
     size_t idx = 0;
 
