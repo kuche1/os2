@@ -16,7 +16,7 @@
 void shell$main(void){
 
 	// arr$INIT(arr_char_t, cmds, shell$MAX_NUMBER_OF_COMMANDS);
-	// arr$arr_char_t$push
+	// arr$arr_char_t$push$CSTR(cmds, shell$CMD_NEXT_COLOR);
 
 	err_t last_command_return_code = err$OK;
 

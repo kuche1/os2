@@ -122,4 +122,13 @@ bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 ////// arr_char_t
 ///
 
-arr$$GENERATE_STRUCT(arr_char_t)
+// // I don't know if this actually works
+
+// arr$$GENERATE_ALL(arr_char_t)
+
+// #define arr$arr_char_t$push$CSTR(arr, cstr)
+//     arr$INIT(char_t, ___ ## arr ## _cstr_data_ ## __LINE__, )
+
+// bool arr$arr_char_t$push$cstr(arr_arr_char_t * arr, char * data){
+//     ...
+// }
