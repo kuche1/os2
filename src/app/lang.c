@@ -76,40 +76,81 @@ err_t lang$inst$0x01_add_addr0x02_to_0x01(lang$program_data_t * ctx){
     return err$OK;
 }
 
+err_t lang$inst$put_lca(__attribute__((unused)) lang$program_data_t * ctx){
+    out$ch('a');
+    return err$OK;
+}
+
+err_t lang$inst$put_lcb(__attribute__((unused)) lang$program_data_t * ctx){
+    out$ch('b');
+    return err$OK;
+}
+
+err_t lang$inst$put_colon(__attribute__((unused)) lang$program_data_t * ctx){
+    out$ch(':');
+    return err$OK;
+}
+
+err_t lang$inst$put_nl(__attribute__((unused)) lang$program_data_t * ctx){
+    out$ch('\n');
+    return err$OK;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
-    // only 0x01
+    // print hardcoded
+    lang$inst$put_lca,
+    lang$inst$put_lcb,
+    lang$inst$put_colon,
+    lang$inst$put_nl,
+
+    // print variable
+    lang$inst$putchar_0x01,
+
+    // input
+    lang$inst$getchar_0x01,
+
+    // operations on 0x01
     lang$inst$add_1_to_0x01,
     lang$inst$add_48_to_0x01,
     lang$inst$sub_48_0x01,
-    lang$inst$putchar_0x01,
-    lang$inst$getchar_0x01,
     lang$inst$clear_0x01,
 
-    // only 0x02
+    // operations on 0x02
     lang$inst$add_1_to_0x02,
 
-    // 0x01 and 0x02
+    // operations on both 0x01 and 0x02
     lang$inst$copy_0x01_to_addr0x02,
     lang$inst$copy_addr0x02_to_0x01,
     lang$inst$0x01_add_addr0x02_to_0x01,
+
+    // lang$inst$if_0x01_inc_inst_idx_by_addr0x02, // TODO
 };
 
 typedef enum{
-    lang$INST_ADD_1_TO_0x01 = 0,
-    lang$INST_ADD_48_TO_0x01,
-    lang$INST_SUB_48_0x01,
-    lang$INST_PUTCHAR_0x01,
-    lang$INST_GETCHAR_0x01,
-    lang$INST_CLEAR_0x01,
+    lang$inst$PUT_LCA = 0,
+    lang$inst$PUT_LCB,
+    lang$inst$PUT_COLON,
+    lang$inst$PUT_NL,
 
-    lang$INST_ADD_1_TO_0x02,
+    lang$inst$PUTCHAR_0x01,
 
-    lang$INST_COPY_0x01_TO_ADDR0x02,
-    lang$INST_COPY_ADDR0x02_TO_0x01,
-    lang$INST_0x01_ADD_ADDR0x02_TO_0x01
+    lang$inst$GETCHAR_0x01,
+
+    lang$inst$ADD_1_TO_0x01,
+    lang$inst$ADD_48_TO_0x01,
+    lang$inst$SUB_48_0x01,
+    lang$inst$CLEAR_0x01,
+
+    lang$inst$ADD_1_TO_0x02,
+
+    lang$inst$COPY_0x01_TO_ADDR0x02,
+    lang$inst$COPY_ADDR0x02_TO_0x01,
+    lang$inst$0x01_ADD_ADDR0x02_TO_0x01,
 }lang$instruction_t;
+
+// TODO comptile assert that `lang$instruction_t` and `lang$instruction_lookup` are of the same length
 
 ///
 ////// interface
@@ -166,32 +207,44 @@ err_t lang$main(void){
 
     // adds 2 numbers
     lang$instruction_t code[] = {
+
+        // "a:"
+        lang$inst$PUT_LCA,
+        lang$inst$PUT_COLON,
+        lang$inst$PUT_NL,
+
         // 0x01 = getchar()
-        lang$INST_GETCHAR_0x01,
+        lang$inst$GETCHAR_0x01,
 
         // 0x02 = 5
-        lang$INST_ADD_1_TO_0x02,
-        lang$INST_ADD_1_TO_0x02,
-        lang$INST_ADD_1_TO_0x02,
-        lang$INST_ADD_1_TO_0x02,
-        lang$INST_ADD_1_TO_0x02,
+        lang$inst$ADD_1_TO_0x02,
+        lang$inst$ADD_1_TO_0x02,
+        lang$inst$ADD_1_TO_0x02,
+        lang$inst$ADD_1_TO_0x02,
+        lang$inst$ADD_1_TO_0x02,
 
         // * 0x02 = [value of] 0x01
         // 0x05 = <some char>
-        lang$INST_COPY_0x01_TO_ADDR0x02,
+        lang$inst$COPY_0x01_TO_ADDR0x02,
+
+        // "b:"
+        lang$inst$PUT_LCB,
+        lang$inst$PUT_COLON,
+        lang$inst$PUT_NL,
 
         // 0x01 = getchar()
-        lang$INST_GETCHAR_0x01,
+        lang$inst$GETCHAR_0x01,
 
         // 0x01 = [value of] 0x01 - (* 0x02)
         // 0x01 = <some char> - <another char>
-        lang$INST_0x01_ADD_ADDR0x02_TO_0x01,
+        lang$inst$0x01_ADD_ADDR0x02_TO_0x01,
 
         // 0x01 -= 48
-        lang$INST_SUB_48_0x01,
+        lang$inst$SUB_48_0x01,
 
         // print([value of] 0x01)
-        lang$INST_PUTCHAR_0x01,
+        lang$inst$PUTCHAR_0x01,
+
     };
 
     // print 0102
