@@ -59,13 +59,16 @@ err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
+    // only 0x01
     lang$inst$add_1_to_0x01,
     lang$inst$add_48_to_0x01,
     lang$inst$putchar_0x01,
     lang$inst$clear_0x01,
 
+    // only 0x02
     lang$inst$add_1_to_0x02,
 
+    // 0x01 and 0x02
     lang$inst$copy_0x01_to_addr0x02,
     lang$inst$copy_addr0x02_to_0x01,
 };
