@@ -12,6 +12,10 @@
 // if we are to "compile" these programs, instead of writing each of the codes
 // to a file, we could write the length, and the "index" of the program, given that
 // we know all possible programs given the length
+// given that we know the number of instructions, we can calculate how much instructions
+// we can cram in, say 64 bits, then chop the program into multiple 64bit pieces (this could
+// also remove the need to write the program length, if we insteam used a worthless instruction
+// that fills the last "block" (if needed))
 
 #define lang$INSTRUCTION_SIZE 2
 // 1 - the instruction
