@@ -18,6 +18,7 @@
 #define shell$CMD_CALCULATOR "calc"
 #define shell$CMD_LANG "lang"
 #define shell$CMD_EXIT "exit"
+#define shell$CMD_SSH "ssh"
 
 void shell$main(void){
 
@@ -76,6 +77,11 @@ void shell$main(void){
 
 			last_command_return_code = lang$main();
 
+		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_SSH)){
+
+			out$cstr("no internet connection\n");
+			last_command_return_code = err$ERR;
+
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_EXIT)){
 
 			break;
@@ -102,6 +108,8 @@ void shell$main(void){
 			out$cstr(shell$CMD_LANG);
 			out$nl();
 			out$cstr(shell$CMD_EXIT);
+			out$nl();
+			out$cstr(shell$CMD_SSH);
 			out$nl();
 
 		}
