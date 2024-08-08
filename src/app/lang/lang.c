@@ -394,11 +394,8 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
-    if(lang$ic$len != LENOF(lang$instruction_lookup)){
-        // TODO make this into a compiletime assert
-        out$cstr("instruction table corrupted\n");
-        return err$ERR;
-    }
+    COMPTIME_ASSERT(lang$ic$len == LENOF(lang$instruction_lookup));
+    // this only reason this is here is because it doesn't work in global scope
 
     uint8_t code[] =
         #include "example-program/calc.c"

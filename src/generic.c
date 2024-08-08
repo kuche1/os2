@@ -1,5 +1,20 @@
 
 ///
+////// assert
+///
+
+// doesn't work in global scope
+#define COMPTIME_ASSERT(cond) \
+    ( (void) sizeof(char[1 - 2*!(cond)]) )
+
+///
+////// lenof
+///
+
+#define LENOF(arr) \
+    ( sizeof(arr) / sizeof(*arr) )
+
+///
 ////// error
 ///
 
@@ -33,10 +48,3 @@ typedef struct{
 ///
 
 #include "array.c"
-
-///
-////// ...
-///
-
-#define LENOF(arr) \
-    ( sizeof(arr) / sizeof(*arr) )
