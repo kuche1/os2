@@ -2,7 +2,7 @@
 typedef struct{
     uint8_t mem[1024 * 10]; // it is assumed that there is enough space for the first couple of necessary "registers"
 
-    uint8_t * code;
+    uint8_t * code; // TODO use `uint16_t` instead, so that we can access 2**16 addresses instead of 2**8
     size_t code_len;
 
     size_t instruction_index;
@@ -11,92 +11,6 @@ typedef struct{
 ///
 ////// instructions
 ///
-
-// err_t lang$inst$add_1_to_0x01(lang$program_data_t * ctx){
-//     ctx->mem[0x01] += 1;
-//     return err$OK;
-// }
-
-// err_t lang$inst$add_48_to_0x01(lang$program_data_t * ctx){
-//     ctx->mem[0x01] += 48;
-//     return err$OK;
-// }
-
-// err_t lang$inst$sub_48_0x01(lang$program_data_t * ctx){
-//     ctx->mem[0x01] -= 48;
-//     return err$OK;
-// }
-
-// err_t lang$inst$putchar_0x01(lang$program_data_t * ctx){
-//     uint8_t ch = ctx->mem[0x01];
-//     out$ch((char) ch);
-//     return err$OK;
-// }
-
-// err_t lang$inst$getchar_0x01(lang$program_data_t * ctx){
-//     char ch = in$ch();
-//     ctx->mem[0x01] = (unsigned char) ch;
-//     return err$OK;
-// }
-
-// err_t lang$inst$clear_0x01(lang$program_data_t * ctx){
-//     ctx->mem[0x01] = 0;
-//     return err$OK;
-// }
-
-// err_t lang$inst$add_1_to_0x02(lang$program_data_t * ctx){
-//     ctx->mem[0x02] += 1;
-//     return err$OK;
-// }
-
-// err_t lang$inst$copy_0x01_to_addr0x02(lang$program_data_t * ctx){
-//     size_t addr = ctx->mem[0x02];
-//     if(addr >= LENOF(ctx->mem)){
-//         return err$ERR;
-//     }
-//     ctx->mem[addr] = ctx->mem[0x01];
-//     return err$OK;
-// }
-
-// err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
-//     size_t addr = ctx->mem[0x02];
-//     if(addr >= LENOF(ctx->mem)){
-//         return err$ERR;
-//     }
-//     ctx->mem[0x01] = ctx->mem[addr];
-//     return err$OK;
-// }
-
-// err_t lang$inst$0x01_add_addr0x02_to_0x01(lang$program_data_t * ctx){
-//     size_t addr = ctx->mem[0x02];
-//     if(addr >= LENOF(ctx->mem)){
-//         return err$ERR;
-//     }
-//     ctx->mem[0x01] = ctx->mem[0x01] + ctx->mem[addr];
-//     return err$OK;
-// }
-
-// err_t lang$inst$put_lca(__attribute__((unused)) lang$program_data_t * ctx){
-//     out$ch('a');
-//     return err$OK;
-// }
-
-// err_t lang$inst$put_lcb(__attribute__((unused)) lang$program_data_t * ctx){
-//     out$ch('b');
-//     return err$OK;
-// }
-
-// err_t lang$inst$put_colon(__attribute__((unused)) lang$program_data_t * ctx){
-//     out$ch(':');
-//     return err$OK;
-// }
-
-// err_t lang$inst$put_nl(__attribute__((unused)) lang$program_data_t * ctx){
-//     out$ch('\n');
-//     return err$OK;
-// }
-
-// TODO use `uint16_t` for instructions
 
 err_t lang$if$out$arg(__attribute__((unused)) lang$program_data_t * ctx, uint8_t arg){
     out$ch((char) arg);
@@ -360,9 +274,9 @@ typedef enum{
     // lang$ic$if$0x03$skipinst$cell,
     // lang$ic$if$0x03$skipinst$ptrcell,
 
-}lang$instruction_code_t;
+    lang$ic$len,
 
-// TODO comptile assert that `lang$instruction_code_t` and `lang$instruction_lookup` are of the same length
+}lang$instruction_code_t;
 
 ///
 ////// interface
@@ -422,6 +336,12 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 ///
 
 err_t lang$main(void){
+
+    if(lang$ic$len != LENOF(lang$instruction_lookup)){
+        // TODO make this into a compiletime assert
+        out$cstr("instruction table corrupted\n");
+        return err$ERR;
+    }
 
     // adds two 1-len numbers together and prints the result (makes sense for result of up to 9)
     uint8_t code[] = {
