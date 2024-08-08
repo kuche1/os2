@@ -390,6 +390,7 @@ err_t lang$main(void){
     }
 
     // asks for (number), (operator), (number) and calculates the result
+    // result only makes sense if it's >=0 and <=9
     uint8_t code[] = {
 
         // *0x10 = input("a:")
