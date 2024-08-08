@@ -12,31 +12,74 @@ typedef struct{
 ////// instructions
 ///
 
-void lang$inst$add_1_to_0x01(lang$program_data_t * ctx){
+err_t lang$inst$add_1_to_0x01(lang$program_data_t * ctx){
     ctx->mem[0x01] += 1;
+    return err$OK;
 }
 
-void lang$inst$add_48_to_0x01(lang$program_data_t * ctx){
+err_t lang$inst$add_48_to_0x01(lang$program_data_t * ctx){
     ctx->mem[0x01] += 48;
+    return err$OK;
 }
 
-void lang$inst$putchar_0x01(lang$program_data_t * ctx){
+err_t lang$inst$putchar_0x01(lang$program_data_t * ctx){
     uint8_t ch = ctx->mem[0x01];
     out$ch((char) ch);
+    return err$OK;
 }
 
-typedef void (* lang$instruction_function_t) (lang$program_data_t *);
+err_t lang$inst$clear_0x01(lang$program_data_t * ctx){
+    ctx->mem[0x01] = 0;
+    return err$OK;
+}
+
+err_t lang$inst$add_1_to_0x02(lang$program_data_t * ctx){
+    ctx->mem[0x02] += 1;
+    return err$OK;
+}
+
+err_t lang$inst$copy_0x01_to_addr0x02(lang$program_data_t * ctx){
+    size_t addr = ctx->mem[0x02];
+    if(addr >= LENOF(ctx->mem)){
+        return err$ERR;
+    }
+    ctx->mem[addr] = ctx->mem[0x01];
+    return err$OK;
+}
+
+err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
+    size_t addr = ctx->mem[0x02];
+    if(addr >= LENOF(ctx->mem)){
+        return err$ERR;
+    }
+    ctx->mem[0x01] = ctx->mem[addr];
+    return err$OK;
+}
+
+typedef err_t (* lang$instruction_function_t) (lang$program_data_t *);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
     lang$inst$add_1_to_0x01,
     lang$inst$add_48_to_0x01,
     lang$inst$putchar_0x01,
+    lang$inst$clear_0x01,
+
+    lang$inst$add_1_to_0x02,
+
+    lang$inst$copy_0x01_to_addr0x02,
+    lang$inst$copy_addr0x02_to_0x01,
 };
 
 typedef enum{
     lang$INST_ADD_1_TO_0x01 = 0,
     lang$INST_ADD_48_TO_0x01,
     lang$INST_PUTCHAR_0x01,
+    lang$INST_CLEAR_0x01,
+
+    lang$INST_ADD_1_TO_0x02,
+
+    lang$INST_COPY_0x01_TO_ADDR0x02,
+    lang$INST_COPY_ADDR0x02_TO_0x01,
 }lang$instruction_t;
 
 ///
@@ -73,7 +116,14 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
         lang$instruction_function_t fnc = lang$instruction_lookup[inst];
 
-        fnc(ctx);
+        err_t instruction_failure = fnc(ctx);
+
+        if(instruction_failure){
+            out$cstr("[instruction failure]\n");
+            ctx->instruction_index = ctx->code_len;
+            return (err_or_bool_t) {.err = err$ERR, .data = true};
+        }
+
     }
 
     return (err_or_bool_t) {.err = err$OK, .data = false};
@@ -90,6 +140,21 @@ err_t lang$main(void){
         lang$INST_PUTCHAR_0x01,
 
         lang$INST_ADD_1_TO_0x01,
+        lang$INST_PUTCHAR_0x01,
+
+        lang$INST_ADD_1_TO_0x02,
+        lang$INST_ADD_1_TO_0x02,
+        lang$INST_ADD_1_TO_0x02,
+        lang$INST_ADD_1_TO_0x02,
+        lang$INST_ADD_1_TO_0x02,
+
+        lang$INST_ADD_1_TO_0x01,
+        // lang$INST_PUTCHAR_0x01,
+        lang$INST_COPY_0x01_TO_ADDR0x02,
+        lang$INST_CLEAR_0x01,
+        lang$INST_ADD_48_TO_0x01,
+        lang$INST_PUTCHAR_0x01,
+        lang$INST_COPY_ADDR0x02_TO_0x01,
         lang$INST_PUTCHAR_0x01,
     };
 
