@@ -1,4 +1,15 @@
 
+// TODO
+//
+// would be super cool if we could make it so that the interperter
+// goes over the source code and finds any "repetitions" of instructions
+// and creates a new instruction that is basically both of these but into
+// one
+
+#define lang$INSTRUCTION_SIZE 2
+// 1 - the instruction
+// 2 - the argument
+
 typedef struct{
     uint8_t mem[1024 * 10]; // it is assumed that there is enough space for the first couple of necessary "registers"
 
@@ -72,6 +83,41 @@ err_t lang$if$add$0x00$arg(lang$program_data_t * ctx, uint8_t arg){
     return err$OK;
 }
 
+err_t lang$if$if$0x00$skipinst$arg(lang$program_data_t * ctx, uint8_t arg){
+    if(ctx->mem[0x00]){
+        ctx->instruction_index += arg * lang$INSTRUCTION_SIZE;
+    }
+    return err$OK;
+}
+
+err_t lang$if$sub$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    ctx->mem[0x00] -= ctx->mem[arg];
+    return err$OK;
+}
+
+err_t lang$if$mul$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    ctx->mem[0x00] *= ctx->mem[arg];
+    return err$OK;
+}
+
+err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    uint8_t val = ctx->mem[arg];
+    if(val == 0){ // not sure if this is the correct cource of action
+        return err$ERR;
+    }
+    ctx->mem[0x00] /= val;
+    return err$OK;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
@@ -111,13 +157,13 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     lang$if$add$0x00$cell,
     // lang$if$add$0x00$ptrcell,
     lang$if$sub$0x00$arg,
-    // lang$if$sub$0x00$cell,
+    lang$if$sub$0x00$cell,
     // lang$if$sub$0x00$ptrcell,
     // lang$if$mul$0x00$arg,
-    // lang$if$mul$0x00$cell,
+    lang$if$mul$0x00$cell,
     // lang$if$mul$0x00$ptrcell,
     // lang$if$div$0x00$arg,
-    // lang$if$div$0x00$cell,
+    lang$if$div$0x00$cell,
     // lang$if$div$0x00$ptrcell,
     // // 0x01
     // lang$if$add$0x01$arg,
@@ -160,7 +206,7 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$div$0x03$ptrcell,
 
     // // if
-    // lang$if$if$0x00$skipinst$arg,
+    lang$if$if$0x00$skipinst$arg,
     // lang$if$if$0x00$skipinst$cell,
     // lang$if$if$0x00$skipinst$ptrcell,
     // lang$if$if$0x01$skipinst$arg,
@@ -212,13 +258,13 @@ typedef enum{
     lang$ic$add$0x00$cell,
     // lang$ic$add$0x00$ptrcell,
     lang$ic$sub$0x00$arg,
-    // lang$ic$sub$0x00$cell,
+    lang$ic$sub$0x00$cell,
     // lang$ic$sub$0x00$ptrcell,
     // lang$ic$mul$0x00$arg,
-    // lang$ic$mul$0x00$cell,
+    lang$ic$mul$0x00$cell,
     // lang$ic$mul$0x00$ptrcell,
     // lang$ic$div$0x00$arg,
-    // lang$ic$div$0x00$cell,
+    lang$ic$div$0x00$cell,
     // lang$ic$div$0x00$ptrcell,
     // // 0x01
     // lang$ic$add$0x01$arg,
@@ -261,7 +307,7 @@ typedef enum{
     // lang$ic$div$0x03$ptrcell,
 
     // // if
-    // lang$ic$if$0x00$skipinst$arg,
+    lang$ic$if$0x00$skipinst$arg,
     // lang$ic$if$0x00$skipinst$cell,
     // lang$ic$if$0x00$skipinst$ptrcell,
     // lang$ic$if$0x01$skipinst$arg,
@@ -289,8 +335,8 @@ err_t lang$program_data_t$init(lang$program_data_t * ctx, uint8_t * code, size_t
 
     ctx->code = code;
     ctx->code_len = code_len;
-    if(code_len % 2 != 0){
-        out$cstr("bad code length (needs to be divisible by 2)\n");
+    if(code_len % lang$INSTRUCTION_SIZE != 0){
+        out$cstr("bad code length\n");
         return err$ERR;
     }
 
@@ -343,7 +389,7 @@ err_t lang$main(void){
         return err$ERR;
     }
 
-    // adds two 1-len numbers together and prints the result (makes sense for result of up to 9)
+    // asks for (number), (operator), (number) and calculates the result
     uint8_t code[] = {
 
         // *0x10 = input("a:")
@@ -356,7 +402,19 @@ err_t lang$main(void){
         lang$ic$in$cell,
         0x10,
 
-        // *0x11 = input("b:")
+        // *0x11 = input("op:")
+        lang$ic$out$arg,
+        'o',
+        lang$ic$out$arg,
+        'p',
+        lang$ic$out$arg,
+        ':',
+        lang$ic$out$arg,
+        '\n',
+        lang$ic$in$cell,
+        0x11,
+
+        // *0x12 = input("b:")
         lang$ic$out$arg,
         'b',
         lang$ic$out$arg,
@@ -364,7 +422,7 @@ err_t lang$main(void){
         lang$ic$out$arg,
         '\n',
         lang$ic$in$cell,
-        0x11,
+        0x12,
 
         // *0x00 = *0x10
         lang$ic$copy$cell$0x00,
@@ -376,33 +434,156 @@ err_t lang$main(void){
         lang$ic$copy$0x00$cell,
         0x10,
 
-        // *0x00 = *0x11
+        // *0x00 = *0x12
         lang$ic$copy$cell$0x00,
-        0x11,
+        0x12,
         // *0x00 -= '0'
         lang$ic$sub$0x00$arg,
         '0',
-        // *0x11 = *0x00
+        // *0x12 = *0x00
         lang$ic$copy$0x00$cell,
-        0x11,
+        0x12,
 
-        // *00 = *0x10
+        // *0x00 = *0x11
         lang$ic$copy$cell$0x00,
-        0x10,
-
-        // *00 += *0x11
-        lang$ic$add$0x00$cell,
         0x11,
+        // *0x00 -= '+'
+        lang$ic$sub$0x00$arg,
+        '+',
+        // if(0x00){skip}
+        lang$ic$if$0x00$skipinst$arg,
+        3,
+            // *0x13 = *0x10 + *0x12
+            lang$ic$copy$cell$0x00,
+            0x10,
+            lang$ic$add$0x00$cell,
+            0x12,
+            lang$ic$copy$0x00$cell,
+            0x13,
 
+        // *0x00 = *0x11
+        lang$ic$copy$cell$0x00,
+        0x11,
+        // *0x00 -= '-'
+        lang$ic$sub$0x00$arg,
+        '-',
+        // if(0x00){skip}
+        lang$ic$if$0x00$skipinst$arg,
+        3,
+            // *0x13 = *0x10 - *0x12
+            lang$ic$copy$cell$0x00,
+            0x10,
+            lang$ic$sub$0x00$cell,
+            0x12,
+            lang$ic$copy$0x00$cell,
+            0x13,
+
+        // *0x00 = *0x11
+        lang$ic$copy$cell$0x00,
+        0x11,
+        // *0x00 -= '*'
+        lang$ic$sub$0x00$arg,
+        '*',
+        // if(0x00){skip}
+        lang$ic$if$0x00$skipinst$arg,
+        3,
+            // *0x13 = *0x10 * *0x12
+            lang$ic$copy$cell$0x00,
+            0x10,
+            lang$ic$mul$0x00$cell,
+            0x12,
+            lang$ic$copy$0x00$cell,
+            0x13,
+
+        // *0x00 = *0x11
+        lang$ic$copy$cell$0x00,
+        0x11,
+        // *0x00 -= '/'
+        lang$ic$sub$0x00$arg,
+        '/',
+        // if(0x00){skip}
+        lang$ic$if$0x00$skipinst$arg,
+        3,
+            // *0x13 = *0x10 / *0x12
+            lang$ic$copy$cell$0x00,
+            0x10,
+            lang$ic$div$0x00$cell,
+            0x12,
+            lang$ic$copy$0x00$cell,
+            0x13,
+
+        // *00 = *0x13
+        lang$ic$copy$cell$0x00,
+        0x13,
         // *00 += '0'
         lang$ic$add$0x00$arg,
         '0',
-
         // print(*0x00)
         lang$ic$out$cell,
         0x00,
 
     };
+
+    // // adds two 1-len numbers together and prints the result (makes sense for result of up to 9)
+    // uint8_t code[] = {
+
+    //     // *0x10 = input("a:")
+    //     lang$ic$out$arg,
+    //     'a',
+    //     lang$ic$out$arg,
+    //     ':',
+    //     lang$ic$out$arg,
+    //     '\n',
+    //     lang$ic$in$cell,
+    //     0x10,
+
+    //     // *0x11 = input("b:")
+    //     lang$ic$out$arg,
+    //     'b',
+    //     lang$ic$out$arg,
+    //     ':',
+    //     lang$ic$out$arg,
+    //     '\n',
+    //     lang$ic$in$cell,
+    //     0x11,
+
+    //     // *0x00 = *0x10
+    //     lang$ic$copy$cell$0x00,
+    //     0x10,
+    //     // *0x00 -= '0'
+    //     lang$ic$sub$0x00$arg,
+    //     '0',
+    //     // *0x10 = *0x00
+    //     lang$ic$copy$0x00$cell,
+    //     0x10,
+
+    //     // *0x00 = *0x11
+    //     lang$ic$copy$cell$0x00,
+    //     0x11,
+    //     // *0x00 -= '0'
+    //     lang$ic$sub$0x00$arg,
+    //     '0',
+    //     // *0x11 = *0x00
+    //     lang$ic$copy$0x00$cell,
+    //     0x11,
+
+    //     // *00 = *0x10
+    //     lang$ic$copy$cell$0x00,
+    //     0x10,
+
+    //     // *00 += *0x11
+    //     lang$ic$add$0x00$cell,
+    //     0x11,
+
+    //     // *00 += '0'
+    //     lang$ic$add$0x00$arg,
+    //     '0',
+
+    //     // print(*0x00)
+    //     lang$ic$out$cell,
+    //     0x00,
+
+    // };
 
     // // pritns "Hello World\n"
     // uint8_t code[] = {
