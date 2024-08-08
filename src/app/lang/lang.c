@@ -96,8 +96,65 @@ typedef struct{
 //     return err$OK;
 // }
 
+// TODO use `uint16_t` for instructions
+
 err_t lang$if$out$arg(__attribute__((unused)) lang$program_data_t * ctx, uint8_t arg){
     out$ch((char) arg);
+    return err$OK;
+}
+
+err_t lang$if$out$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    uint8_t value = ctx->mem[arg];
+    out$ch((char) value);
+    return err$OK;
+}
+
+err_t lang$if$in$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    char ch = in$ch();
+    ctx->mem[arg] = (uint8_t) ch;
+    return err$OK;
+}
+
+err_t lang$if$copy$cell$0x00(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    uint8_t val = ctx->mem[arg];
+    ctx->mem[0x00] = val;
+    return err$OK;
+}
+
+err_t lang$if$copy$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    uint8_t val = ctx->mem[0x00];
+    ctx->mem[arg] = val;
+    return err$OK;
+}
+
+err_t lang$if$add$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$ERR;
+    // }
+    uint8_t val = ctx->mem[arg];
+    ctx->mem[0x00] += val;
+    return err$OK;
+}
+
+err_t lang$if$sub$0x00$arg(lang$program_data_t * ctx, uint8_t arg){
+    ctx->mem[0x00] -= arg;
+    return err$OK;
+}
+
+err_t lang$if$add$0x00$arg(lang$program_data_t * ctx, uint8_t arg){
+    ctx->mem[0x00] += arg;
     return err$OK;
 }
 
@@ -107,19 +164,39 @@ lang$instruction_function_t lang$instruction_lookup[] = {
 
     // output
     lang$if$out$arg,
-    // lang$if$out$cell,
+    lang$if$out$cell,
     // lang$if$out$ptrcell,
 
     // // input
-    // lang$if$in$cell,
+    lang$if$in$cell,
     // lang$if$in$ptrcell,
+
+    // // copy from
+    lang$if$copy$cell$0x00,
+    // lang$if$copy$ptrcell$0x00,
+    // lang$if$copy$cell$0x01,
+    // lang$if$copy$ptrcell$0x01,
+    // lang$if$copy$cell$0x02,
+    // lang$if$copy$ptrcell$0x02,
+    // lang$if$copy$cell$0x03,
+    // lang$if$copy$ptrcell$0x03,
+
+    // // copy to
+    lang$if$copy$0x00$cell,
+    // lang$if$copy$0x00$ptrcell,
+    // lang$if$copy$0x01$cell,
+    // lang$if$copy$0x01$ptrcell,
+    // lang$if$copy$0x02$cell,
+    // lang$if$copy$0x02$ptrcell,
+    // lang$if$copy$0x03$cell,
+    // lang$if$copy$0x03$ptrcell,
 
     // //// arithmetic
     // // 0x00
-    // lang$if$add$0x00$arg,
-    // lang$if$add$0x00$cell,
+    lang$if$add$0x00$arg,
+    lang$if$add$0x00$cell,
     // lang$if$add$0x00$ptrcell,
-    // lang$if$sub$0x00$arg,
+    lang$if$sub$0x00$arg,
     // lang$if$sub$0x00$cell,
     // lang$if$sub$0x00$ptrcell,
     // lang$if$mul$0x00$arg,
@@ -168,16 +245,6 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$div$0x03$cell,
     // lang$if$div$0x03$ptrcell,
 
-    // // copy
-    // lang$if$copy$0x00$cell,
-    // lang$if$copy$0x00$ptrcell,
-    // lang$if$copy$0x01$cell,
-    // lang$if$copy$0x01$ptrcell,
-    // lang$if$copy$0x02$cell,
-    // lang$if$copy$0x02$ptrcell,
-    // lang$if$copy$0x03$cell,
-    // lang$if$copy$0x03$ptrcell,
-
     // // if
     // lang$if$if$0x00$skipinst$arg,
     // lang$if$if$0x00$skipinst$cell,
@@ -198,19 +265,39 @@ typedef enum{
 
     // output
     lang$ic$out$arg,
-    // lang$ic$out$cell,
+    lang$ic$out$cell,
     // lang$ic$out$ptrcell,
 
     // // input
-    // lang$ic$in$cell,
+    lang$ic$in$cell,
     // lang$ic$in$ptrcell,
+
+    // // copy from
+    lang$ic$copy$cell$0x00,
+    // lang$ic$copy$ptrcell$0x00,
+    // lang$ic$copy$cell$0x01,
+    // lang$ic$copy$ptrcell$0x01,
+    // lang$ic$copy$cell$0x02,
+    // lang$ic$copy$ptrcell$0x02,
+    // lang$ic$copy$cell$0x03,
+    // lang$ic$copy$ptrcell$0x03,
+
+    // // copy to
+    lang$ic$copy$0x00$cell,
+    // lang$ic$copy$0x00$ptrcell,
+    // lang$ic$copy$0x01$cell,
+    // lang$ic$copy$0x01$ptrcell,
+    // lang$ic$copy$0x02$cell,
+    // lang$ic$copy$0x02$ptrcell,
+    // lang$ic$copy$0x03$cell,
+    // lang$ic$copy$0x03$ptrcell,
 
     // //// arithmetic
     // // 0x00
-    // lang$ic$add$0x00$arg,
-    // lang$ic$add$0x00$cell,
+    lang$ic$add$0x00$arg,
+    lang$ic$add$0x00$cell,
     // lang$ic$add$0x00$ptrcell,
-    // lang$ic$sub$0x00$arg,
+    lang$ic$sub$0x00$arg,
     // lang$ic$sub$0x00$cell,
     // lang$ic$sub$0x00$ptrcell,
     // lang$ic$mul$0x00$arg,
@@ -258,16 +345,6 @@ typedef enum{
     // lang$ic$div$0x03$arg,
     // lang$ic$div$0x03$cell,
     // lang$ic$div$0x03$ptrcell,
-
-    // // copy
-    // lang$ic$copy$0x00$cell,
-    // lang$ic$copy$0x00$ptrcell,
-    // lang$ic$copy$0x01$cell,
-    // lang$ic$copy$0x01$ptrcell,
-    // lang$ic$copy$0x02$cell,
-    // lang$ic$copy$0x02$ptrcell,
-    // lang$ic$copy$0x03$cell,
-    // lang$ic$copy$0x03$ptrcell,
 
     // // if
     // lang$ic$if$0x00$skipinst$arg,
@@ -346,37 +423,103 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
-    // pritns "Hello World\n"
+    // adds two 1-len numbers together and prints the result (makes sense for result of up to 9)
     uint8_t code[] = {
+
+        // *0x10 = input("a:")
         lang$ic$out$arg,
-        'H',
+        'a',
         lang$ic$out$arg,
-        'e',
-        lang$ic$out$arg,
-        'l',
-        lang$ic$out$arg,
-        'l',
-        lang$ic$out$arg,
-        'o',
-        lang$ic$out$arg,
-        ' ',
-        lang$ic$out$arg,
-        'W',
-        lang$ic$out$arg,
-        'o',
-        lang$ic$out$arg,
-        'r',
-        lang$ic$out$arg,
-        'l',
-        lang$ic$out$arg,
-        'd',
+        ':',
         lang$ic$out$arg,
         '\n',
+        lang$ic$in$cell,
+        0x10,
+
+        // *0x11 = input("b:")
+        lang$ic$out$arg,
+        'b',
+        lang$ic$out$arg,
+        ':',
+        lang$ic$out$arg,
+        '\n',
+        lang$ic$in$cell,
+        0x11,
+
+        // *0x00 = *0x10
+        lang$ic$copy$cell$0x00,
+        0x10,
+        // *0x00 -= '0'
+        lang$ic$sub$0x00$arg,
+        '0',
+        // *0x10 = *0x00
+        lang$ic$copy$0x00$cell,
+        0x10,
+
+        // *0x00 = *0x11
+        lang$ic$copy$cell$0x00,
+        0x11,
+        // *0x00 -= '0'
+        lang$ic$sub$0x00$arg,
+        '0',
+        // *0x11 = *0x00
+        lang$ic$copy$0x00$cell,
+        0x11,
+
+        // *00 = *0x10
+        lang$ic$copy$cell$0x00,
+        0x10,
+
+        // *00 += *0x11
+        lang$ic$add$0x00$cell,
+        0x11,
+
+        // *00 += '0'
+        lang$ic$add$0x00$arg,
+        '0',
+
+        // print(*0x00)
+        lang$ic$out$cell,
+        0x00,
+
     };
+
+    // // pritns "Hello World\n"
+    // uint8_t code[] = {
+    //     lang$ic$out$arg,
+    //     'H',
+    //     lang$ic$out$arg,
+    //     'e',
+    //     lang$ic$out$arg,
+    //     'l',
+    //     lang$ic$out$arg,
+    //     'l',
+    //     lang$ic$out$arg,
+    //     'o',
+    //     lang$ic$out$arg,
+    //     ' ',
+    //     lang$ic$out$arg,
+    //     'W',
+    //     lang$ic$out$arg,
+    //     'o',
+    //     lang$ic$out$arg,
+    //     'r',
+    //     lang$ic$out$arg,
+    //     'l',
+    //     lang$ic$out$arg,
+    //     'd',
+    //     lang$ic$out$arg,
+    //     '\n',
+    // };
 
     lang$program_data_t context;
     lang$program_data_t * ctx = & context;
-    lang$program_data_t$init(ctx, code, LENOF(code));
+    {
+        err_t err = lang$program_data_t$init(ctx, code, LENOF(code));
+        if(err){
+            return err;
+        }
+    }
 
     while(true){
 
