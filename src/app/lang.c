@@ -244,6 +244,7 @@ err_t lang$main(void){
 
         // print([value of] 0x01)
         lang$inst$PUTCHAR_0x01,
+        lang$inst$PUT_NL,
 
     };
 
