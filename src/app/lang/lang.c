@@ -5,6 +5,13 @@
 // goes over the source code and finds any "repetitions" of instructions
 // and creates a new instruction that is basically both of these but into
 // one
+//
+// the parser could simply look for names that exactly match the instruction codes
+// but without the `lang$ic$` prefix
+//
+// if we are to "compile" these programs, instead of writing each of the codes
+// to a file, we could write the length, and the "index" of the program, given that
+// we know all possible programs given the length
 
 #define lang$INSTRUCTION_SIZE 2
 // 1 - the instruction
