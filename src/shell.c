@@ -1,6 +1,6 @@
 
 #include "app/calculator.c"
-#include "app/lang.c"
+#include "app/lang/lang.c"
 
 #define shell$MAX_NUMBER_OF_COMMANDS 10
 #define shell$CMD_MAXLEN 50
