@@ -205,6 +205,64 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
+    // TODO this is insane, we need to make instructions that actually take arguments
+    // (we could only do instructions that only take 1 argument, that's fine)
+    // // ask user for num0 & operator & num1, then calculates the result
+    // lang$instruction_t code[] = {
+
+    //     // "a:"
+    //     lang$inst$PUT_LCA,
+    //     lang$inst$PUT_COLON,
+    //     lang$inst$PUT_NL,
+
+    //     // 0x02 = 4
+    //     lang$inst$ADD_1_TO_0x02,
+    //     lang$inst$ADD_1_TO_0x02,
+    //     lang$inst$ADD_1_TO_0x02,
+    //     lang$inst$ADD_1_TO_0x02,
+    //     // 0x04 = <a> (the appropriate number value)
+    //     lang$inst$GETCHAR_ADDR0x02,
+    //     lang$inst$SUB_ORD0_ADDR0x02,
+
+    //     // "op:"
+    //     lang$inst$PUT_LCO,
+    //     lang$inst$PUT_LCP,
+    //     lang$inst$PUT_COLON,
+    //     lang$inst$PUT_NL,
+
+    //     // 0x02 = 5
+    //     lang$inst$ADD_1_TO_0x02,
+    //     // 0x05 = <op> (the ascii value)
+    //     lang$inst$GETCHAR_ADDR0x02,
+    //     // // 0x03 = 1
+    //     // lang$inst$ADD_1_to_0x03,
+
+    //     // "b:"
+    //     lang$inst$PUT_LCB,
+    //     lang$inst$PUT_COLON,
+    //     lang$inst$PUT_NL,
+
+    //     // 0x02 = 6
+    //     lang$inst$ADD_1_TO_0x02,
+    //     // 0x06 = <b> (the appropriate number value)
+    //     lang$inst$GETCHAR_ADDR0x02,
+    //     lang$inst$SUB_ORD0_ADDR0x02,
+
+    //     // 0x02 = 5
+    //     lang$inst$SUB_1_0x02,
+    //     // 0x03 = 1
+    //     lang$inst$ADD_1_0x03,
+    //     // 0x01 = <op> (ascii)
+    //     lang$inst$COPY_ADDR0x02_ADDR0x03,
+
+    //     // 0x01 -= ord('+')
+    //     lang$inst$SUB_0x01_ORDPLUS,
+
+    //     // if(0x01 != 0){skip}
+    //     lang$inst$if_0x01_inc_inst_idx_by_addr0x02,
+
+    // }
+
     // ask user for 2 numbers, then add them (only makes sense for up to sum of 9)
     lang$instruction_t code[] = {
 
