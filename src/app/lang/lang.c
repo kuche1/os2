@@ -309,6 +309,7 @@ err_t lang$program_data_t$init(lang$program_data_t * ctx, uint8_t * code, size_t
 }
 
 // true - execution finished
+// false - there are more instructions to be executed
 err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instructions_to_exec){
 
     while(number_of_instructions_to_exec-- > 0){
@@ -345,7 +346,7 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
-    // pritns hardcoded text
+    // pritns "Hello World\n"
     uint8_t code[] = {
         lang$ic$out$arg,
         'H',
