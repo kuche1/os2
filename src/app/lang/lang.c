@@ -283,9 +283,9 @@ typedef enum{
     // lang$ic$if$0x03$skipinst$cell,
     // lang$ic$if$0x03$skipinst$ptrcell,
 
-}lang$instruction_t;
+}lang$instruction_code_t;
 
-// TODO comptile assert that `lang$instruction_t` and `lang$instruction_lookup` are of the same length
+// TODO comptile assert that `lang$instruction_code_t` and `lang$instruction_lookup` are of the same length
 
 ///
 ////// interface
@@ -317,7 +317,7 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
             return (err_or_bool_t) {.err = err$OK, .data = true};
         }
 
-        lang$instruction_t inst = ctx->code[ctx->instruction_index++];
+        lang$instruction_code_t inst = ctx->code[ctx->instruction_index++];
         uint8_t arg = ctx->code[ctx->instruction_index++];
 
         if(inst >= LENOF(lang$instruction_lookup)){
