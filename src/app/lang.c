@@ -205,7 +205,7 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
-    // adds 2 numbers
+    // ask user for 2 numbers, then add them (only makes sense for up to sum of 9)
     lang$instruction_t code[] = {
 
         // "a:"
