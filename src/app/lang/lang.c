@@ -2,7 +2,7 @@
 typedef struct{
     uint8_t mem[1024 * 10]; // it is assumed that there is enough space for the first couple of necessary "registers"
 
-    uint8_t * code; // TODO use `uint16_t` instead, so that we can access 2**16 addresses instead of 2**8
+    uint8_t * code; // TODO use `uint16_t` instead, so that we can access 2**16 addresses instead of 2**8; then bring back the ifs in the instructions
     size_t code_len;
 
     size_t instruction_index;
