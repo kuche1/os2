@@ -22,9 +22,20 @@ err_t lang$inst$add_48_to_0x01(lang$program_data_t * ctx){
     return err$OK;
 }
 
+err_t lang$inst$sub_48_0x01(lang$program_data_t * ctx){
+    ctx->mem[0x01] -= 48;
+    return err$OK;
+}
+
 err_t lang$inst$putchar_0x01(lang$program_data_t * ctx){
     uint8_t ch = ctx->mem[0x01];
     out$ch((char) ch);
+    return err$OK;
+}
+
+err_t lang$inst$getchar_0x01(lang$program_data_t * ctx){
+    char ch = in$ch();
+    ctx->mem[0x01] = (unsigned char) ch;
     return err$OK;
 }
 
@@ -56,13 +67,24 @@ err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
     return err$OK;
 }
 
+err_t lang$inst$0x01_add_addr0x02_to_0x01(lang$program_data_t * ctx){
+    size_t addr = ctx->mem[0x02];
+    if(addr >= LENOF(ctx->mem)){
+        return err$ERR;
+    }
+    ctx->mem[0x01] = ctx->mem[0x01] + ctx->mem[addr];
+    return err$OK;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
     // only 0x01
     lang$inst$add_1_to_0x01,
     lang$inst$add_48_to_0x01,
+    lang$inst$sub_48_0x01,
     lang$inst$putchar_0x01,
+    lang$inst$getchar_0x01,
     lang$inst$clear_0x01,
 
     // only 0x02
@@ -71,18 +93,22 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // 0x01 and 0x02
     lang$inst$copy_0x01_to_addr0x02,
     lang$inst$copy_addr0x02_to_0x01,
+    lang$inst$0x01_add_addr0x02_to_0x01,
 };
 
 typedef enum{
     lang$INST_ADD_1_TO_0x01 = 0,
     lang$INST_ADD_48_TO_0x01,
+    lang$INST_SUB_48_0x01,
     lang$INST_PUTCHAR_0x01,
+    lang$INST_GETCHAR_0x01,
     lang$INST_CLEAR_0x01,
 
     lang$INST_ADD_1_TO_0x02,
 
     lang$INST_COPY_0x01_TO_ADDR0x02,
     lang$INST_COPY_ADDR0x02_TO_0x01,
+    lang$INST_0x01_ADD_ADDR0x02_TO_0x01
 }lang$instruction_t;
 
 ///
@@ -138,28 +164,59 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
 
 err_t lang$main(void){
 
+    // adds 2 numbers
     lang$instruction_t code[] = {
-        lang$INST_ADD_48_TO_0x01,
-        lang$INST_PUTCHAR_0x01,
+        // 0x01 = getchar()
+        lang$INST_GETCHAR_0x01,
 
-        lang$INST_ADD_1_TO_0x01,
-        lang$INST_PUTCHAR_0x01,
-
+        // 0x02 = 5
         lang$INST_ADD_1_TO_0x02,
         lang$INST_ADD_1_TO_0x02,
         lang$INST_ADD_1_TO_0x02,
         lang$INST_ADD_1_TO_0x02,
         lang$INST_ADD_1_TO_0x02,
 
-        lang$INST_ADD_1_TO_0x01,
-        // lang$INST_PUTCHAR_0x01,
+        // * 0x02 = [value of] 0x01
+        // 0x05 = <some char>
         lang$INST_COPY_0x01_TO_ADDR0x02,
-        lang$INST_CLEAR_0x01,
-        lang$INST_ADD_48_TO_0x01,
-        lang$INST_PUTCHAR_0x01,
-        lang$INST_COPY_ADDR0x02_TO_0x01,
+
+        // 0x01 = getchar()
+        lang$INST_GETCHAR_0x01,
+
+        // 0x01 = [value of] 0x01 - (* 0x02)
+        // 0x01 = <some char> - <another char>
+        lang$INST_0x01_ADD_ADDR0x02_TO_0x01,
+
+        // 0x01 -= 48
+        lang$INST_SUB_48_0x01,
+
+        // print([value of] 0x01)
         lang$INST_PUTCHAR_0x01,
     };
+
+    // print 0102
+    // lang$instruction_t code[] = {
+    //     lang$INST_ADD_48_TO_0x01,
+    //     lang$INST_PUTCHAR_0x01,
+
+    //     lang$INST_ADD_1_TO_0x01,
+    //     lang$INST_PUTCHAR_0x01,
+
+    //     lang$INST_ADD_1_TO_0x02,
+    //     lang$INST_ADD_1_TO_0x02,
+    //     lang$INST_ADD_1_TO_0x02,
+    //     lang$INST_ADD_1_TO_0x02,
+    //     lang$INST_ADD_1_TO_0x02,
+
+    //     lang$INST_ADD_1_TO_0x01,
+    //     // lang$INST_PUTCHAR_0x01,
+    //     lang$INST_COPY_0x01_TO_ADDR0x02,
+    //     lang$INST_CLEAR_0x01,
+    //     lang$INST_ADD_48_TO_0x01,
+    //     lang$INST_PUTCHAR_0x01,
+    //     lang$INST_COPY_ADDR0x02_TO_0x01,
+    //     lang$INST_PUTCHAR_0x01,
+    // };
 
     lang$program_data_t context;
     lang$program_data_t * ctx = & context;
