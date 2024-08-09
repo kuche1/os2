@@ -1,6 +1,5 @@
 
 #define lang$program_data_t$init_from_cstr$MAX_NUMBER_OF_VARS 10
-// TODO increase after it has been tested
 
 typedef struct{
     char name[lang$init_from_cstr$WORD_MAXLEN];

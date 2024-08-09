@@ -82,6 +82,8 @@ err_t lang$if$mul$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     return err$ok;
 }
 
+// TODO would probably be worth something to add another division instruction
+// that is the same, except it doesn't raise an exception in case of div by 0
 err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
     //     return err$err;
