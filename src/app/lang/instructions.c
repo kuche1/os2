@@ -1,102 +1,102 @@
 
 err_t lang$if$out$arg(__attribute__((unused)) lang$program_data_t * ctx, uint8_t arg){
     out$ch((char) arg);
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$out$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     uint8_t value = ctx->mem[arg];
     out$ch((char) value);
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$in$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     char ch = in$ch();
     ctx->mem[arg] = (uint8_t) ch;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$copy$cell$0x00(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
     ctx->mem[0x00] = val;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$copy$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     uint8_t val = ctx->mem[0x00];
     ctx->mem[arg] = val;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$add$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
     ctx->mem[0x00] += val;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$sub$0x00$arg(lang$program_data_t * ctx, uint8_t arg){
     ctx->mem[0x00] -= arg;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$add$0x00$arg(lang$program_data_t * ctx, uint8_t arg){
     ctx->mem[0x00] += arg;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$if$0x00$skipinst$arg(lang$program_data_t * ctx, uint8_t arg){
     if(ctx->mem[0x00]){
         ctx->instruction_index += arg * lang$INSTRUCTION_SIZE;
     }
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$sub$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     ctx->mem[0x00] -= ctx->mem[arg];
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$mul$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     ctx->mem[0x00] *= ctx->mem[arg];
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // if(arg >= LENOF(ctx->mem)){
-    //     return err$ERR;
+    //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
     if(val == 0){ // not sure if this is the correct cource of action
-        return err$ERR;
+        return err$err;
     }
     ctx->mem[0x00] /= val;
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$if$copy$arg$0x00(lang$program_data_t * ctx, uint8_t arg){
     ctx->mem[0x00] = arg;
-    return err$OK;
+    return err$ok;
 }
 
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);

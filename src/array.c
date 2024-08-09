@@ -13,10 +13,10 @@
 #define arr$$GENERATE_FNC_PUSH(type) \
     err_t arr$ ## type ## $push(arr_ ## type * arr, type data){ \
         if(arr->len >= arr->cap){ \
-            return err$ERR; \
+            return err$err; \
         } \
         arr->data[arr->len++] = data; \
-        return err$OK; \
+        return err$ok; \
     }
 
 // no need to make things more complicated by
@@ -87,7 +87,7 @@ arr$$GENERATE_ALL(char_t)
 
 err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
     if(arr->len <= 0){
-        return err$ERR;
+        return err$err;
     }
     
     char ch = arr->data[0];
@@ -99,7 +99,7 @@ err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
     arr->len -= 1;
 
     * out_popped_item = ch;
-    return err$OK;
+    return err$ok;
 }
 
 bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){

@@ -235,10 +235,10 @@ err_t in$scancode_to_ascii(unsigned char scancode, char * out_ascii){
         // 88 f12
 
         default:
-            return err$ERR;
+            return err$err;
     }
 
-    return err$OK;
+    return err$ok;
 }
 
 char in$ch(void){

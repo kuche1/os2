@@ -33,14 +33,10 @@ void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
 ////// error
 ///
 
-// TODO she gi eba teq laina ujasna ideq sa,
-// trqbva si4kite da gi iztriq osven err_t
-
 typedef bool err_t;
 
-// TODO use lowercase
-#define err$OK false
-#define err$ERR true
+#define err$ok false
+#define err$err true
 
 ///
 ////// array
@@ -110,11 +106,11 @@ err_t strlen_to_u8(char * arg, size_t arg_len, uint8_t * out_u8){
             continue;
         }
 
-        return err$ERR;
+        return err$err;
 
     }
 
     * out_u8 = num;
-    return err$OK;
+    return err$ok;
 
 }

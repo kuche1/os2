@@ -27,7 +27,7 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
                 out$cstr("could not find variable `");
                 out$strlen(arg, arg_len);
                 out$cstr("`\n");
-                return err$ERR;
+                return err$err;
             }
 
         }
@@ -60,7 +60,7 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
             * inst1 = lang$ic$copy$0x00$cell;
             * inst1_arg = var_addr;
 
-            return err$OK;
+            return err$ok;
 
         }
 
@@ -73,11 +73,11 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
     if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
         * inst0_set = true;
         * inst0 = lang$ic$out$arg;
-        return err$OK;
+        return err$ok;
     }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
         * inst0_set = true;
         * inst0 = lang$ic$out$cell;
-        return err$OK;
+        return err$ok;
     }
 
     // error
@@ -86,7 +86,7 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
     out$strlen(inst, inst_len);
     out$cstr("`\n");
 
-    return err$ERR;
+    return err$err;
 }
 
 err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_code, uint8_t * ic_code, size_t ic_code_cap){
@@ -118,7 +118,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             if(inst_len != 0){
                 out$cstr("instruction already specified\n");
-                return err$ERR;
+                return err$err;
             }
 
             copy(word, inst, word_len);
@@ -130,7 +130,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             if(arg_len != 0){
                 out$cstr("argument already specified\n");
-                return err$ERR;
+                return err$err;
             }
 
             copy(word, arg, word_len);
@@ -165,21 +165,21 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
                 );
 
                 if(err){
-                    return err$ERR;
+                    return err$err;
                 }
 
                 if(inst0_set){
 
                     if(ic_code_len >= ic_code_cap){
                         out$cstr("bytecode capacity reached (instruction)\n");
-                        return err$ERR;
+                        return err$err;
                     }
 
                     ic_code[ic_code_len++] = inst0;
 
                     if(ic_code_len >= ic_code_cap){
                         out$cstr("bytecode capacity reached (argument)\n");
-                        return err$ERR;
+                        return err$err;
                     }
 
                     ic_code[ic_code_len++] = inst0_arg;
@@ -190,14 +190,14 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
                     if(ic_code_len >= ic_code_cap){
                         out$cstr("bytecode capacity reached (instruction)\n");
-                        return err$ERR;
+                        return err$err;
                     }
 
                     ic_code[ic_code_len++] = inst1;
 
                     if(ic_code_len >= ic_code_cap){
                         out$cstr("bytecode capacity reached (argument)\n");
-                        return err$ERR;
+                        return err$err;
                     }
 
                     ic_code[ic_code_len++] = inst1_arg;
@@ -213,7 +213,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             if(word_len >= LENOF(word)){
                 out$cstr("keyword is too long\n");
-                return err$ERR;
+                return err$err;
             }
 
             word[word_len++] = ch;

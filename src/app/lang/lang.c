@@ -97,6 +97,6 @@ err_t lang$main(void){
 
     }
 
-    return err$OK;
+    return err$ok;
 
 }

@@ -8,12 +8,12 @@ err_t lang$program_data_t$init_from_instruction_code(lang$program_data_t * ctx, 
     ctx->code_len = code_len;
     if(code_len % lang$INSTRUCTION_SIZE != 0){
         out$cstr("bad code length\n");
-        return err$ERR;
+        return err$err;
     }
 
     ctx->instruction_index = 0;
 
-    return err$OK;
+    return err$ok;
 }
 
 #include "init_from_cstr.c"
@@ -24,7 +24,7 @@ err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instr
 
         if(ctx->instruction_index >= ctx->code_len){
             * out_execution_finished = true;
-            return err$OK;
+            return err$ok;
         }
 
         lang$instruction_code_t inst = ctx->code[ctx->instruction_index++];
@@ -32,7 +32,7 @@ err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instr
 
         if(inst >= LENOF(lang$instruction_lookup)){
             * out_execution_finished = true;
-            return err$ERR;
+            return err$err;
         }
 
         lang$instruction_function_t fnc = lang$instruction_lookup[inst];
@@ -43,11 +43,11 @@ err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instr
             out$cstr("[instruction failure]\n");
             ctx->instruction_index = ctx->code_len;
             * out_execution_finished = true;
-            return err$ERR;
+            return err$err;
         }
 
     }
 
     * out_execution_finished = false;
-    return err$OK;
+    return err$ok;
 }

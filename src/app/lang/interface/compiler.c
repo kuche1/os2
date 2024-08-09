@@ -28,7 +28,7 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
             out$cstr("variable already exists `");
             out$strlen(name, name_len);
             out$cstr("`\n");
-            return err$ERR;
+            return err$err;
         }
     }
 
@@ -36,14 +36,14 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
         out$cstr("not enough space for new var `");
         out$strlen(name, name_len);
         out$cstr("`\n");
-        return err$ERR;
+        return err$err;
     }
 
     if(name_len > LENOF(ctx->vars[ctx->vars_len].name)){
         out$cstr("variable name too long `");
         out$strlen(name, name_len);
         out$cstr("`\n");
-        return err$ERR;
+        return err$err;
     }
 
     copy(name, ctx->vars[ctx->vars_len].name, name_len);
@@ -69,7 +69,7 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
     ctx->vars_len += 1;
     ctx->next_var_addr += 1;
 
-    return err$OK;
+    return err$ok;
 }
 
 err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_len, uint8_t * out_var_addr){
@@ -77,11 +77,11 @@ err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_l
     for(size_t idx=0; idx<ctx->vars_len; ++idx){
         if(strlen_sameas_strlen(name, name_len, ctx->vars[idx].name, ctx->vars[idx].name_len)){
             * out_var_addr = ctx->vars[idx].addr;
-            return err$OK;
+            return err$ok;
         }
     }
 
-    return err$ERR;
+    return err$err;
 
 }
 
@@ -98,5 +98,5 @@ err_t lang$compiler_t$process_directive(
     }
 
     * out_compiler_directive_processed = false;
-    return err$OK;
+    return err$ok;
 }

@@ -30,7 +30,7 @@ get_new_input:
         err_t empty = arr$char_t$pop_head(equ, &head);
 
         if(empty){
-            return err$ERR;
+            return err$err;
         }
 
         if(head == ' '){
@@ -97,6 +97,6 @@ get_new_input:
     out$int(result);
     out$nl();
 
-    return err$OK;
+    return err$ok;
 
 }

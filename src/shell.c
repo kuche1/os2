@@ -25,7 +25,7 @@ void shell$main(void){
 	// arr$INIT(arr_char_t, cmds, shell$MAX_NUMBER_OF_COMMANDS);
 	// arr$arr_char_t$push$CSTR(cmds, shell$CMD_NEXT_COLOR);
 
-	err_t last_command_return_code = err$OK;
+	err_t last_command_return_code = err$ok;
 
     out$cstr("Welcome to ligma shell\n");
     out$cstr("\n");
@@ -42,7 +42,7 @@ void shell$main(void){
 		arr$INIT(char_t, cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
 
-		last_command_return_code = err$OK;
+		last_command_return_code = err$ok;
 
 		// out$cstr("you just entered: `");
 		// out$str(cmd);
@@ -80,7 +80,7 @@ void shell$main(void){
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_SSH)){
 
 			out$cstr("no internet connection\n");
-			last_command_return_code = err$ERR;
+			last_command_return_code = err$err;
 
 		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_EXIT)){
 
@@ -88,7 +88,7 @@ void shell$main(void){
 
 		}else{
 
-			last_command_return_code = err$ERR;
+			last_command_return_code = err$err;
 
 			out$cstr("unknown command: `");
 			out$str(cmd);
