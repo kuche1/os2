@@ -63,7 +63,7 @@ inline void in$outb(uint16_t port, uint8_t val){
 //     0,  /* All other keys are undefined */
 // };
 
-err_or_char_t in$scancode_to_ascii(unsigned char scancode){
+err_t in$scancode_to_ascii(unsigned char scancode, char * out_ascii){
     switch(scancode){
         case 2:
         case 3:
@@ -74,96 +74,139 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
         case 8:
         case 9:
         case 10:
-            return (err_or_char_t) {.err = false, .data = (char) (scancode - 2 + '1')};
+            * out_ascii = (char) (scancode - 2 + '1');
+            break;
         case 11:
-            return (err_or_char_t) {.err = false, .data = '0'};
+            * out_ascii = '0';
+            break;
         case 12:
-            return (err_or_char_t) {.err = false, .data = '-'};
+            * out_ascii = '-';
+            break;
         case 13:
-            return (err_or_char_t) {.err = false, .data = '='};
+            * out_ascii = '=';
+            break;
         case 14: // backspace
-            return (err_or_char_t) {.err = false, .data = '\b'};
+            * out_ascii = '\b';
+            break;
         // case 15: // tab
         case 16:
-            return (err_or_char_t) {.err = false, .data = 'q'};
+            * out_ascii = 'q';
+            break;
         case 17:
-            return (err_or_char_t) {.err = false, .data = 'w'};
+            * out_ascii = 'w';
+            break;
         case 18:
-            return (err_or_char_t) {.err = false, .data = 'e'};
+            * out_ascii = 'e';
+            break;
         case 19:
-            return (err_or_char_t) {.err = false, .data = 'r'};
+            * out_ascii = 'r';
+            break;
         case 20:
-            return (err_or_char_t) {.err = false, .data = 't'};
+            * out_ascii = 't';
+            break;
         case 21:
-            return (err_or_char_t) {.err = false, .data = 'y'};
+            * out_ascii = 'y';
+            break;
         case 22:
-            return (err_or_char_t) {.err = false, .data = 'u'};
+            * out_ascii = 'u';
+            break;
         case 23:
-            return (err_or_char_t) {.err = false, .data = 'i'};
+            * out_ascii = 'i';
+            break;
         case 24:
-            return (err_or_char_t) {.err = false, .data = 'o'};
+            * out_ascii = 'o';
+            break;
         case 25:
-            return (err_or_char_t) {.err = false, .data = 'p'};
+            * out_ascii = 'p';
+            break;
         case 26:
-            return (err_or_char_t) {.err = false, .data = '['};
+            * out_ascii = '[';
+            break;
         case 27:
-            return (err_or_char_t) {.err = false, .data = ']'};
+            * out_ascii = ']';
+            break;
         case 28:
-            return (err_or_char_t) {.err = false, .data = '\n'};
+            * out_ascii = '\n';
+            break;
         // case 29: // control
         case 30:
-            return (err_or_char_t) {.err = false, .data = 'a'};
+            * out_ascii = 'a';
+            break;
         case 31:
-            return (err_or_char_t) {.err = false, .data = 's'};
+            * out_ascii = 's';
+            break;
         case 32:
-            return (err_or_char_t) {.err = false, .data = 'd'};
+            * out_ascii = 'd';
+            break;
         case 33:
-            return (err_or_char_t) {.err = false, .data = 'f'};
+            * out_ascii = 'f';
+            break;
         case 34:
-            return (err_or_char_t) {.err = false, .data = 'g'};
+            * out_ascii = 'g';
+            break;
         case 35:
-            return (err_or_char_t) {.err = false, .data = 'h'};
+            * out_ascii = 'h';
+            break;
         case 36:
-            return (err_or_char_t) {.err = false, .data = 'j'};
+            * out_ascii = 'j';
+            break;
         case 37:
-            return (err_or_char_t) {.err = false, .data = 'k'};
+            * out_ascii = 'k';
+            break;
         case 38:
-            return (err_or_char_t) {.err = false, .data = 'l'};
+            * out_ascii = 'l';
+            break;
         case 39:
-            return (err_or_char_t) {.err = false, .data = ';'};
+            * out_ascii = ';';
+            break;
         case 40:
-            return (err_or_char_t) {.err = false, .data = '\''};
+            * out_ascii = '\'';
+            break;
         case 41:
-            return (err_or_char_t) {.err = false, .data = '`'};
+            * out_ascii = '`';
+            break;
         // case 42: // left shift
         case 43:
-            return (err_or_char_t) {.err = false, .data = '\\'};
+            * out_ascii = '\\';
+            break;
         case 44:
-            return (err_or_char_t) {.err = false, .data = 'z'};
+            * out_ascii = 'z';
+            break;
         case 45:
-            return (err_or_char_t) {.err = false, .data = 'x'};
+            * out_ascii = 'x';
+            break;
         case 46:
-            return (err_or_char_t) {.err = false, .data = 'c'};
+            * out_ascii = 'c';
+            break;
         case 47:
-            return (err_or_char_t) {.err = false, .data = 'v'};
+            * out_ascii = 'v';
+            break;
         case 48:
-            return (err_or_char_t) {.err = false, .data = 'b'};
+            * out_ascii = 'b';
+            break;
         case 49:
-            return (err_or_char_t) {.err = false, .data = 'n'};
+            * out_ascii = 'n';
+            break;
         case 50:
-            return (err_or_char_t) {.err = false, .data = 'm'};
+            * out_ascii = 'm';
+            break;
         case 51:
-            return (err_or_char_t) {.err = false, .data = ','};
+            * out_ascii = ',';
+            break;
         case 52:
-            return (err_or_char_t) {.err = false, .data = '.'};
+            * out_ascii = '.';
+            break;
         case 53:
-            return (err_or_char_t) {.err = false, .data = '/'};
+            * out_ascii = '/';
+            break;
         // case 54: // right shift
         case 55:
-            return (err_or_char_t) {.err = false, .data = '*'};
+            * out_ascii = '*';
+            break;
         // case 56: // alt
         case 57:
-            return (err_or_char_t) {.err = false, .data = ' '};
+            * out_ascii = ' ';
+            break;
         // case 58: // caps lock
         // 59 f1
         // ...
@@ -174,12 +217,14 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
         // 72 up arrow
         // 73 page up
         case 74:
-            return (err_or_char_t) {.err = false, .data = '-'};
+            * out_ascii = '-';
+            break;
         // 75 left arrow
         // 76 no dea
         // 77 right arrow
         case 78:
-            return (err_or_char_t) {.err = false, .data = '+'};
+            * out_ascii = '+';
+            break;
         // 79 end
         // 80 down arrow
         // 81 page down
@@ -188,8 +233,12 @@ err_or_char_t in$scancode_to_ascii(unsigned char scancode){
         // 84 85 86 no idea
         // 87 f11
         // 88 f12
+
+        default:
+            return err$ERR;
     }
-    return (err_or_char_t) {.err = true, .data = 0};
+
+    return err$OK;
 }
 
 char in$ch(void){
@@ -206,7 +255,8 @@ char in$ch(void){
             //     return in$scancode_to_ascii[keycode];
             // }
 
-            UNP(err, char, ascii, in$scancode_to_ascii(keycode));
+            char ascii;
+            err_t err = in$scancode_to_ascii(keycode, &ascii);
 
             if(err){
                 continue;

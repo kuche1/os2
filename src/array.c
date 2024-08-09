@@ -85,9 +85,9 @@ typedef char char_t;
 
 arr$$GENERATE_ALL(char_t)
 
-err_or_char_t arr$char_t$pop_head(arr_char_t * arr){
+err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
     if(arr->len <= 0){
-        return (err_or_char_t) {.err = err$ERR, .data = 0};
+        return err$ERR;
     }
     
     char ch = arr->data[0];
@@ -98,7 +98,8 @@ err_or_char_t arr$char_t$pop_head(arr_char_t * arr){
 
     arr->len -= 1;
 
-    return (err_or_char_t) {.err = err$OK, .data = ch};
+    * out_popped_item = ch;
+    return err$OK;
 }
 
 bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){

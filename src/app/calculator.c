@@ -26,7 +26,8 @@ get_new_input:
 
     while(equ->len > 0){
 
-        UNP(empty, char, head, arr$char_t$pop_head(equ));
+        char head;
+        err_t empty = arr$char_t$pop_head(equ, &head);
 
         if(empty){
             return err$ERR;

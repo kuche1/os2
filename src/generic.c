@@ -63,11 +63,6 @@ typedef bool err_t;
         var_data1 = err_or_data.data1; \
     }
 
-typedef struct{
-    err_t err;
-    char data;
-}err_or_char_t;
-
 ///
 ////// array
 ///
