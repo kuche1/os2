@@ -59,7 +59,7 @@ err_t lang$main(void){
         #include "example-program/cstr/variable.c" // TODO tova shibano laino e tolkova bugavo 4e ne e istina
     ;
 
-    size_t bytecode_maxlen = 40;
+    size_t bytecode_maxlen = 80;
 
     uint8_t bytecode[bytecode_maxlen];
 

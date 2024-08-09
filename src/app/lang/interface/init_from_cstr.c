@@ -1,10 +1,10 @@
 
-#define lang$program_data_t$init_from_cstr$WORD_MAXLEN 10
+#define lang$init_from_cstr$WORD_MAXLEN 10
 // TODO increase after it has been tested
 
 #include "compiler.c"
 
-err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
+err_t lang$translate_cstr_inst_to_bytecode_inst(
     lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len,
     bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
     bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg
@@ -21,11 +21,6 @@ err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
 
         if(eor.err){
 
-            // out$cstr("could not convert instruction argument to u8 `");
-            // out$cstr_len(arg, arg_len);
-            // out$cstr("`\n");
-            // return (err_or_u8_u8_t) {.err=err$ERR, .data0=0, .data1=0};
-
             err_or_u8_t var_eor = lang$compiler_t$find_var(ctx, arg, arg_len);
 
             if(var_eor.err){
@@ -35,6 +30,11 @@ err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
                 return err$ERR;
             }else{
                 arg_u8 = var_eor.data;
+                // out$cstr("[dbg: found variable `");
+                // out$strlen(arg, arg_len);
+                // out$cstr("` and converted to number `");
+                // out$u8(arg_u8);
+                // out$cstr("`]");
             }
 
         }else{
@@ -53,10 +53,16 @@ err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
 
         if(!eod.err){
             
+            // out$cstr("[dbg: converted fake instruction `");
+            // out$strlen(inst, inst_len);
+            // out$cstr("` into address `");
+            // out$u8(eod.data);
+            // out$cstr("`]");
+
             // cell with name "inst" needs to get the data from cell located at "arg_u8"
 
             * inst0_set = true;
-            * inst0 = lang$ic$copy$cell$0x00;
+            * inst0 = lang$ic$copy$arg$0x00;
             * inst0_arg = arg_u8;
 
             * inst1_set = true;
@@ -71,12 +77,15 @@ err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
     
     // actual instruction
 
-    if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
+    * inst0_arg = arg_u8;
 
+    if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
         * inst0_set = true;
         * inst0 = lang$ic$out$arg;
-        * inst0_arg = arg_u8;
-
+        return err$OK;
+    }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
+        * inst0_set = true;
+        * inst0 = lang$ic$out$cell;
         return err$OK;
     }
 
@@ -98,7 +107,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
     size_t cstr_code_idx = 0;
 
-    char word[lang$program_data_t$init_from_cstr$WORD_MAXLEN];
+    char word[lang$init_from_cstr$WORD_MAXLEN];
     size_t word_len = 0;
 
     char inst[LENOF(word)];
@@ -138,7 +147,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             word_len = 0;
 
-            UNP(pcd_err, bool, is_compiler_directive, lang$program_data_t$init_from_cstr$process_compiler_directive(&compiler, inst, inst_len, arg, arg_len));
+            UNP(pcd_err, bool, is_compiler_directive, lang$compiler_t$process_directive(&compiler, inst, inst_len, arg, arg_len));
 
             if(pcd_err){
                 return pcd_err;
@@ -154,7 +163,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
                 uint8_t inst1;
                 uint8_t inst1_arg;
 
-                err_t err = lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
+                err_t err = lang$translate_cstr_inst_to_bytecode_inst(
                     &compiler, inst, inst_len, arg, arg_len,
                     &inst0_set, &inst0, &inst0_arg,
                     &inst1_set, &inst1, &inst1_arg
@@ -180,23 +189,23 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
                     ic_code[ic_code_len++] = inst0_arg;
 
-                    if(inst1_set){
+                }
 
-                        if(ic_code_len >= ic_code_cap){
-                            out$cstr("bytecode capacity reached (instruction)\n");
-                            return err$ERR;
-                        }
+                if(inst1_set){
 
-                        ic_code[ic_code_len++] = inst1;
-
-                        if(ic_code_len >= ic_code_cap){
-                            out$cstr("bytecode capacity reached (argument)\n");
-                            return err$ERR;
-                        }
-
-                        ic_code[ic_code_len++] = inst1_arg;
-
+                    if(ic_code_len >= ic_code_cap){
+                        out$cstr("bytecode capacity reached (instruction)\n");
+                        return err$ERR;
                     }
+
+                    ic_code[ic_code_len++] = inst1;
+
+                    if(ic_code_len >= ic_code_cap){
+                        out$cstr("bytecode capacity reached (argument)\n");
+                        return err$ERR;
+                    }
+
+                    ic_code[ic_code_len++] = inst1_arg;
 
                 }
 

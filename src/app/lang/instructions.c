@@ -94,6 +94,11 @@ err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     return err$OK;
 }
 
+err_t lang$if$copy$arg$0x00(lang$program_data_t * ctx, uint8_t arg){
+    ctx->mem[0x00] = arg;
+    return err$OK;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
@@ -108,12 +113,16 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$in$ptrcell,
 
     // // copy from
+    lang$if$copy$arg$0x00,
     lang$if$copy$cell$0x00,
     // lang$if$copy$ptrcell$0x00,
+    // lang$if$copy$arg$0x01,
     // lang$if$copy$cell$0x01,
     // lang$if$copy$ptrcell$0x01,
+    // lang$if$copy$arg$0x02,
     // lang$if$copy$cell$0x02,
     // lang$if$copy$ptrcell$0x02,
+    // lang$if$copy$arg$0x03,
     // lang$if$copy$cell$0x03,
     // lang$if$copy$ptrcell$0x03,
 
@@ -209,12 +218,16 @@ typedef enum{
     // lang$ic$in$ptrcell,
 
     // // copy from
+    lang$ic$copy$arg$0x00,
     lang$ic$copy$cell$0x00,
     // lang$ic$copy$ptrcell$0x00,
+    // lang$ic$copy$arg$0x01,
     // lang$ic$copy$cell$0x01,
     // lang$ic$copy$ptrcell$0x01,
+    // lang$ic$copy$arg$0x02,
     // lang$ic$copy$cell$0x02,
     // lang$ic$copy$ptrcell$0x02,
+    // lang$ic$copy$arg$0x03,
     // lang$ic$copy$cell$0x03,
     // lang$ic$copy$ptrcell$0x03,
 

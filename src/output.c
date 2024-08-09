@@ -192,5 +192,11 @@ void out$int(int num){
 		out$ch('-');
 		out$int(-num); // TODO overflow/underflow possible ?
 	}
+	COMPTIME_ASSERT(sizeof(num) <= sizeof(size_t));
+	out$size((size_t) num);
+}
+
+void out$u8(uint8_t num){
+	COMPTIME_ASSERT(sizeof(num) < sizeof(size_t));
 	out$size((size_t) num);
 }

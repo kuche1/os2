@@ -19,6 +19,8 @@
 ////// copy
 ///
 
+// TODO perhaps it's  best if we create another version of this,
+// but one that checks both lengths
 void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
     uint8_t * dst_u8 = dst;
     const uint8_t * src_u8 = src;
