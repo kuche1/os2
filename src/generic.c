@@ -19,8 +19,8 @@
 ////// copy
 ///
 
-// TODO perhaps it's  best if we create another version of this,
-// but one that checks both lengths
+// TODO make another version of this that checks both var ranges
+// keep in mind: this is called `copy` not `copy_partial`
 void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
     uint8_t * dst_u8 = dst;
     const uint8_t * src_u8 = src;
@@ -38,6 +38,7 @@ void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
 
 typedef bool err_t;
 
+// TODO use lowercase
 #define err$OK false
 #define err$ERR true
 
@@ -76,12 +77,6 @@ typedef struct{
     err_t err;
     uint8_t data;
 }err_or_u8_t;
-
-typedef struct{
-    err_t err;
-    uint8_t data0;
-    uint8_t data1;
-}err_or_u8_u8_t;
 
 ///
 ////// array
