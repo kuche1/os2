@@ -121,7 +121,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
                 return err$err;
             }
 
-            err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail");
+            err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail\n");
             inst_len = word_len;
 
             word_len = 0;
@@ -133,7 +133,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
                 return err$err;
             }
 
-            err$CHECK( copy(word, word_len, arg, sizeof(arg), word_len) , "copy fail");
+            err$CHECK( copy(word, word_len, arg, sizeof(arg), word_len) , "copy fail\n");
             arg_len = word_len;
 
             word_len = 0;
