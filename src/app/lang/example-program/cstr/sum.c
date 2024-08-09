@@ -4,22 +4,6 @@
 // prints the num
 // note that the result will look weird if it's >=10
 
-// TODO unfinished
-
-"out$arg 97\n"
-"out$arg 58\n"
-"out$arg 10\n"
-"var a\n"
-"in$cell a\n"
-
-"out$arg 98\n"
-"out$arg 58\n"
-"out$arg 10\n"
-"var b\n"
-"in$cell b\n"
-
-"a -= 48\n"
-
 {
 
     // *0x10 = input("a:")

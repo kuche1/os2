@@ -1,11 +1,14 @@
 
 #define lang$init_from_cstr$WORD_MAXLEN 10
-// TODO increase after it has been tested
+
+#define lang$init_from_cstr$INST_MAX_ARGS 10
 
 #include "compiler.c"
 
 err_t lang$translate_cstr_inst_to_bytecode_inst(
-    lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len,
+    lang$compiler_t * ctx,
+    char * inst, size_t inst_len,
+    char arguments[lang$init_from_cstr$WORD_MAXLEN][lang$init_from_cstr$INST_MAX_ARGS], size_t * argument_lens, size_t arguments_len, // the array is passed by reference
     bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
     bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg
 ){
@@ -15,60 +18,83 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
 
     // get data or convert variable to data
 
-    uint8_t arg_u8;
-    {
-        err_t err = strlen_to_u8(arg, arg_len, & arg_u8);
+    // uint8_t arg_u8;
+    // {
+    //     err_t err = strlen_to_u8(arg, arg_len, & arg_u8);
 
-        if(err){
+    //     if(err){
 
-            err_t err_find = lang$compiler_t$find_var(ctx, arg, arg_len, & arg_u8);
+    //         err_t err_find = lang$compiler_t$find_var(ctx, arg, arg_len, & arg_u8);
 
-            if(err_find){
-                out$cstr("could not find variable `");
-                out$strlen(arg, arg_len);
-                out$cstr("`\n");
-                return err$err;
-            }
+    //         if(err_find){
+    //             out$cstr("could not find variable `");
+    //             out$strlen(arg, arg_len);
+    //             out$cstr("`\n");
+    //             return err$err;
+    //         }
 
-        }
+    //     }
 
-    }
+    // }
 
-    // variable
-    // note that this is going to fuck you over
-    // if some retard has overwritten certain addresses as variable names
+    // uint8_t arg_u8;
+    // {
+    //     err_t err = lang$compiler_t$get_arg_value(ctx, arg, arg_len, &arg_u8);
+    //     if(err){
+    //         return err;
+    //     }
+    // }
 
-    {
+    // set variable value
+    // note that this is going to fuck you over if some
+    // retard has overwritten certain addresses as variable names
+
+    do{
         uint8_t var_addr;
-        err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, & var_addr);
-
-        if(!err){
-            
-            // out$cstr("[dbg: converted fake instruction `");
-            // out$strlen(inst, inst_len);
-            // out$cstr("` into address `");
-            // out$u8(eod.data);
-            // out$cstr("`]");
-
-            // cell with name "inst" needs to get the data from cell located at "arg_u8"
-
-            * inst0_set = true;
-            * inst0 = lang$ic$copy$arg$0x00;
-            * inst0_arg = arg_u8;
-
-            * inst1_set = true;
-            * inst1 = lang$ic$copy$0x00$cell;
-            * inst1_arg = var_addr;
-
-            return err$ok;
-
+        {
+            err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, &var_addr);
+            if(err){
+                break;
+            }
         }
 
-    }
+        if(arguments_len != 1){
+            out$cstr("bad number of arguments\n");
+            return err$err;
+        }
+
+        uint8_t arg_value;
+        err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+        if(err){
+            return err;
+        }
+  
+        * inst0_set = true;
+        * inst0 = lang$ic$copy$arg$0x00;
+        * inst0_arg = arg_value;
+
+        * inst1_set = true;
+        * inst1 = lang$ic$copy$0x00$cell;
+        * inst1_arg = var_addr;
+
+        return err$ok;
+
+    }while(false);
     
     // actual instruction
 
-    * inst0_arg = arg_u8;
+    if(arguments_len != 1){
+        out$cstr("bad number of arguments\n");
+        return err$err;
+    }
+
+    uint8_t arg_value;
+    err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+    if(err){
+        return err;
+    }
+
+    * inst0_arg = arg_value;
 
     if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
         * inst0_set = true;
@@ -104,8 +130,10 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
     char inst[LENOF(word)];
     size_t inst_len = 0;
 
-    char arg[LENOF(word)];
-    size_t arg_len = 0;
+    char arguments[LENOF(word)][lang$init_from_cstr$INST_MAX_ARGS];
+    size_t argument_lens[lang$init_from_cstr$INST_MAX_ARGS];
+    size_t arguments_len = 0;
+    COMPTIME_ASSERT(LENOF(arguments) == lang$init_from_cstr$INST_MAX_ARGS); // TODO delete
 
     while(true){
 
@@ -114,33 +142,39 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
             break;
         }
 
-        if(ch == ' '){
+        if((ch == ' ') || (ch == '\n')){
 
-            if(inst_len != 0){
-                out$cstr("instruction already specified\n");
+            if(word_len <= 0){
+                continue;
+            }
+
+            if(inst_len == 0){
+                err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail\n");
+                inst_len = word_len;
+                word_len = 0;
+                continue;
+            }
+
+            if(arguments_len >= LENOF(arguments)){
+                out$cstr("too many arguments\n");
                 return err$err;
             }
 
-            err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail\n");
-            inst_len = word_len;
+            err$CHECK( copy(word, word_len, arguments[arguments_len], sizeof(arguments[arguments_len]), word_len) , "copy fail\n");
+            argument_lens[arguments_len] = word_len;
 
+            arguments_len += 1;
             word_len = 0;
 
-        }else if(ch == '\n'){
-
-            if(arg_len != 0){
-                out$cstr("argument already specified\n");
-                return err$err;
+            if(ch != '\n'){
+                continue;
             }
-
-            err$CHECK( copy(word, word_len, arg, sizeof(arg), word_len) , "copy fail\n");
-            arg_len = word_len;
-
-            word_len = 0;
 
             bool is_compiler_directive;
             err_t pcd_err = lang$compiler_t$process_directive(
-                &compiler, inst, inst_len, arg, arg_len,
+                &compiler,
+                inst, inst_len,
+                arguments, argument_lens, arguments_len,
                 &is_compiler_directive
             );
 
@@ -159,7 +193,9 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
                 uint8_t inst1_arg;
 
                 err_t err = lang$translate_cstr_inst_to_bytecode_inst(
-                    &compiler, inst, inst_len, arg, arg_len,
+                    &compiler,
+                    inst, inst_len,
+                    arguments, argument_lens, arguments_len,
                     &inst0_set, &inst0, &inst0_arg,
                     &inst1_set, &inst1, &inst1_arg
                 );
@@ -207,7 +243,7 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
             }
 
             inst_len = 0;
-            arg_len = 0;
+            arguments_len = 0;
 
         }else{
 
