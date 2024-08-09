@@ -42,27 +42,6 @@ typedef bool err_t;
 #define err$OK false
 #define err$ERR true
 
-// unpack `err_or_<type>_t`
-#define UNP(var_err, type, var_data, fnc) \
-    bool var_err; \
-    type var_data; \
-    { \
-        err_or_ ## type ## _t err_or_data = fnc; \
-        var_err = err_or_data.err; \
-        var_data = err_or_data.data; \
-    }
-
-#define UNP_U8_U8(var_err, var_data0, var_data1, fnc) \
-    bool var_err; \
-    uint8_t var_data0; \
-    uint8_t var_data1; \
-    { \
-        err_or_u8_u8_t err_or_data = fnc; \
-        var_err = err_or_data.err; \
-        var_data0 = err_or_data.data0; \
-        var_data1 = err_or_data.data1; \
-    }
-
 ///
 ////// array
 ///
