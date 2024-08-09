@@ -36,6 +36,7 @@ undefined behavior.
 stack_bottom:
 //.skip 16384 # 16 KiB
 .skip 32768 # 32 KiB
+//.skip 65536 # 64 KiB
 stack_top:
 
 /*

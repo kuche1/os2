@@ -6,7 +6,7 @@
 #include "compiler.c"
 
 err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_code, uint8_t * ic_code, size_t ic_code_cap){
-    
+
     lang$compiler_t compiler;
     lang$compiler_t$init(&compiler);
 
@@ -68,12 +68,17 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
             uint8_t inst1;
             uint8_t inst1_arg;
 
+            bool inst2_set = false;
+            uint8_t inst2;
+            uint8_t inst2_arg;
+
             err_t err = lang$compiler_t$compile_instruction(
                 &compiler,
                 inst, inst_len,
                 arguments, argument_lens, arguments_len,
                 &inst0_set, &inst0, &inst0_arg,
-                &inst1_set, &inst1, &inst1_arg
+                &inst1_set, &inst1, &inst1_arg,
+                &inst2_set, &inst2, &inst2_arg
             );
 
             if(err){
@@ -116,6 +121,24 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             }
 
+            if(inst2_set){
+
+                if(ic_code_len >= ic_code_cap){
+                    out$cstr("bytecode capacity reached (instruction)\n");
+                    return err$err;
+                }
+
+                ic_code[ic_code_len++] = inst2;
+
+                if(ic_code_len >= ic_code_cap){
+                    out$cstr("bytecode capacity reached (argument)\n");
+                    return err$err;
+                }
+
+                ic_code[ic_code_len++] = inst2_arg;
+
+            }
+
             inst_len = 0;
             arguments_len = 0;
 
@@ -130,6 +153,11 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
         }
 
+    }
+
+    if((word_len != 0) || (inst_len != 0) || (arguments_len != 0)){
+        out$cstr("something went wrong\n");
+        return err$err;
     }
 
     return lang$program_data_t$init_from_instruction_code(ctx, ic_code, ic_code_len);
