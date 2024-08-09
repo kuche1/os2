@@ -40,7 +40,7 @@ typedef struct{
 ////// interface
 ///
 
-err_t lang$program_data_t$init(lang$program_data_t * ctx, uint8_t * code, size_t code_len){
+err_t lang$program_data_t$init_from_instruction_code(lang$program_data_t * ctx, uint8_t * code, size_t code_len){
     for(size_t i=0; i<LENOF(ctx->mem); ++i){
         ctx->mem[i] = 0;
     }
@@ -105,7 +105,7 @@ err_t lang$main(void){
     lang$program_data_t context;
     lang$program_data_t * ctx = & context;
     {
-        err_t err = lang$program_data_t$init(ctx, code, LENOF(code));
+        err_t err = lang$program_data_t$init_from_instruction_code(ctx, code, LENOF(code));
         if(err){
             return err;
         }
