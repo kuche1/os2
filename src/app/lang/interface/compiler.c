@@ -98,22 +98,93 @@ err_t lang$compiler_t$get_arg_value(
     return err$ok;
 }
 
-err_t lang$compiler_t$process_directive(
+err_t lang$compiler_t$compile_instruction(
     lang$compiler_t * ctx,
     char * inst, size_t inst_len,
     char arguments[lang$init_from_cstr$WORD_MAXLEN][lang$init_from_cstr$INST_MAX_ARGS], size_t * argument_lens, size_t arguments_len, // the array is passed by reference
-    bool * out_compiler_directive_processed
+    bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
+    bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg
 ){
+
+    * inst0_set = false;
+    * inst1_set = false;
+
+    // only compile directive
 
     if(strlen_sameas_cstr(inst, inst_len, "var")){
         if(arguments_len != 1){
             out$cstr("bad number of arguments\n");
             return err$err;
         }
-        * out_compiler_directive_processed = true;
         return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0]);
     }
 
-    * out_compiler_directive_processed = false;
+    // set variable value
+    // note that this is going to fuck you over if some
+    // retard has overwritten certain addresses as variable names
+
+    do{
+        uint8_t var_addr;
+        {
+            err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, &var_addr);
+            if(err){
+                break;
+            }
+        }
+
+        if(arguments_len != 1){
+            out$cstr("bad number of arguments\n");
+            return err$err;
+        }
+
+        uint8_t arg_value;
+        err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+        if(err){
+            return err;
+        }
+  
+        * inst0_set = true;
+        * inst0 = lang$ic$copy$arg$0x00;
+        * inst0_arg = arg_value;
+
+        * inst1_set = true;
+        * inst1 = lang$ic$copy$0x00$cell;
+        * inst1_arg = var_addr;
+
+        return err$ok;
+
+    }while(false);
+
+    // actual instruction
+
+    if(arguments_len != 1){
+        out$cstr("bad number of arguments\n");
+        return err$err;
+    }
+
+    uint8_t arg_value;
+    err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+    if(err){
+        return err;
+    }
+
+    * inst0_arg = arg_value;
+
+    if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
+        * inst0_set = true;
+        * inst0 = lang$ic$out$arg;
+        return err$ok;
+    }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
+        * inst0_set = true;
+        * inst0 = lang$ic$out$cell;
+        return err$ok;
+    }
+
+    // unknown
+
+    out$cstr("unknown instruction `");
+    out$strlen(inst, inst_len);
+    out$cstr("`\n");
+
     return err$ok;
 }

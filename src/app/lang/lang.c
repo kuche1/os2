@@ -56,7 +56,8 @@ err_t lang$main(void){
 
     char cstrcode[] =
         // #include "example-program/cstr/hello-world.c"
-        #include "example-program/cstr/variable.c" // TODO tova shibano laino e tolkova bugavo 4e ne e istina
+        #include "example-program/cstr/variable.c"
+        // #include "example-program/cstr/sum.c"
     ;
 
     size_t bytecode_maxlen = 80;
