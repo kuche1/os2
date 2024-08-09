@@ -31,6 +31,9 @@ void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
 ////// error
 ///
 
+// TODO she gi eba teq laina ujasna ideq sa,
+// trqbva si4kite da gi iztriq osven err_t
+
 typedef bool err_t;
 
 #define err$OK false

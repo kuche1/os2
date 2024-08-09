@@ -4,7 +4,14 @@
 
 #include "compiler.c"
 
-err_or_u8_u8_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len){
+err_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
+    lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len,
+    bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
+    bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg
+){
+
+    * inst0_set = false;
+    * inst1_set = false;
 
     // get data or convert variable to data
 
@@ -25,7 +32,7 @@ err_or_u8_u8_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecod
                 out$cstr("could not find variable `");
                 out$strlen(arg, arg_len);
                 out$cstr("`\n");
-                return (err_or_u8_u8_t) {.err=err$ERR, .data0=0, .data1=0};
+                return err$ERR;
             }else{
                 arg_u8 = var_eor.data;
             }
@@ -38,27 +45,39 @@ err_or_u8_u8_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecod
     }
 
     // variable
+    // note that this is going to fuck you over
+    // if some retard has overwritten certain addresses as variable names
 
     {
         err_or_u8_t eod = lang$compiler_t$find_var(ctx, inst, inst_len);
 
         if(!eod.err){
             
-            TODO we actually need to return 2 fucking instructions here
+            // cell with name "inst" needs to get the data from cell located at "arg_u8"
+
+            * inst0_set = true;
+            * inst0 = lang$ic$copy$cell$0x00;
+            * inst0_arg = arg_u8;
+
+            * inst1_set = true;
+            * inst1 = lang$ic$copy$0x00$cell;
+            * inst1_arg = eod.data;
+
+            return err$OK;
 
         }
-
-        // cell with name "inst" needs to get the data from cell located at "arg_u8"
-
-        lang$ic$copy$cell$0x00 arg_u8
-        lang$ic$copy$0x00$cell inst
 
     }
     
     // actual instruction
 
     if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
-        return (err_or_u8_u8_t) {.err=err$OK, .data0=lang$ic$out$arg, .data1=arg_u8};
+
+        * inst0_set = true;
+        * inst0 = lang$ic$out$arg;
+        * inst0_arg = arg_u8;
+
+        return err$OK;
     }
 
     // error
@@ -67,7 +86,7 @@ err_or_u8_u8_t lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecod
     out$strlen(inst, inst_len);
     out$cstr("`\n");
 
-    return (err_or_u8_u8_t) {.err=err$ERR, .data0=0, .data1=0};
+    return err$ERR;
 }
 
 err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_code, uint8_t * ic_code, size_t ic_code_cap){
@@ -127,25 +146,59 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             if(!is_compiler_directive){
 
-                UNP_U8_U8(err, data0, data1, lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(&compiler, inst, inst_len, arg, arg_len));
+                bool inst0_set = false;
+                uint8_t inst0;
+                uint8_t inst0_arg;
+
+                bool inst1_set = false;
+                uint8_t inst1;
+                uint8_t inst1_arg;
+
+                err_t err = lang$program_data_t$init_from_cstr$translate_cstr_inst_to_bytecode_inst(
+                    &compiler, inst, inst_len, arg, arg_len,
+                    &inst0_set, &inst0, &inst0_arg,
+                    &inst1_set, &inst1, &inst1_arg
+                );
 
                 if(err){
                     return err$ERR;
                 }
 
-                if(ic_code_len >= ic_code_cap){
-                    out$cstr("bytecode capacity reached (instruction)\n");
-                    return err$ERR;
+                if(inst0_set){
+
+                    if(ic_code_len >= ic_code_cap){
+                        out$cstr("bytecode capacity reached (instruction)\n");
+                        return err$ERR;
+                    }
+
+                    ic_code[ic_code_len++] = inst0;
+
+                    if(ic_code_len >= ic_code_cap){
+                        out$cstr("bytecode capacity reached (argument)\n");
+                        return err$ERR;
+                    }
+
+                    ic_code[ic_code_len++] = inst0_arg;
+
+                    if(inst1_set){
+
+                        if(ic_code_len >= ic_code_cap){
+                            out$cstr("bytecode capacity reached (instruction)\n");
+                            return err$ERR;
+                        }
+
+                        ic_code[ic_code_len++] = inst1;
+
+                        if(ic_code_len >= ic_code_cap){
+                            out$cstr("bytecode capacity reached (argument)\n");
+                            return err$ERR;
+                        }
+
+                        ic_code[ic_code_len++] = inst1_arg;
+
+                    }
+
                 }
-
-                ic_code[ic_code_len++] = data0;
-
-                if(ic_code_len >= ic_code_cap){
-                    out$cstr("bytecode capacity reached (argument)\n");
-                    return err$ERR;
-                }
-
-                ic_code[ic_code_len++] = data1;
 
             }
 

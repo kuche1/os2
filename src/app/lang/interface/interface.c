@@ -16,7 +16,7 @@ err_t lang$program_data_t$init_from_instruction_code(lang$program_data_t * ctx, 
     return err$OK;
 }
 
-// #include "init_from_cstr.c"
+#include "init_from_cstr.c"
 
 // true - execution finished
 // false - there are more instructions to be executed
