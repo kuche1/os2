@@ -155,7 +155,7 @@ void out$cstr(const char * data){
 	}
 }
 
-void out$cstr_len(const char * data, size_t len){
+void out$strlen(const char * data, size_t len){
 	for(size_t i=0; i<len; ++i){
 		out$ch(data[i]);
 	}

@@ -11,6 +11,7 @@
 ////// lenof
 ///
 
+// TODO rename to CAPOF
 #define LENOF(arr) \
     ( sizeof(arr) / sizeof(*arr) )
 
@@ -86,6 +87,26 @@ typedef struct{
 ///
 ////// string
 ///
+
+bool strlen_sameas_strlen(char * str0, size_t str0_len, char * str1, size_t str1_len){
+
+    if(str0_len != str1_len){
+        return false;
+    }
+
+    for(size_t i=0; i<str0_len; ++i){
+
+        char ch0 = str0[i];
+        char ch1 = str1[i];
+
+        if(ch0 != ch1){
+            return false;
+        }
+
+    }
+
+    return true;
+}
 
 bool strlen_sameas_cstr(char * cstrlen, size_t cstrlen_len, char * cstr){
     for(size_t i=0;; ++i){

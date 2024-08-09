@@ -52,38 +52,38 @@ err_t lang$main(void){
     // this only reason this is here is because it doesn't work in global scope
 
     lang$program_data_t context;
-    lang$program_data_t * ctx = & context;
 
-    char cstrcode[] =
-        #include "example-program/cstr/hello-world.c"
-    ;
-
-    size_t bytecode_maxlen = 40;
-
-    uint8_t bytecode[bytecode_maxlen];
-
-    {
-        err_t err = lang$program_data_t$init_from_cstr(ctx, cstrcode, bytecode, bytecode_maxlen);
-        if(err){
-            return err;
-        }
-    }
-
-    // uint8_t bytecode[] =
-    //     // #include "example-program/bytecode/calc.c"
-    //     #include "example-program/bytecode/hello-world.c"
+    // char cstrcode[] =
+    //     // #include "example-program/cstr/hello-world.c"
+    //     #include "example-program/cstr/variable.c"
     // ;
 
+    // size_t bytecode_maxlen = 40;
+
+    // uint8_t bytecode[bytecode_maxlen];
+
     // {
-    //     err_t err = lang$program_data_t$init_from_instruction_code(ctx, bytecode, LENOF(bytecode));
+    //     err_t err = lang$program_data_t$init_from_cstr(&context, cstrcode, bytecode, bytecode_maxlen);
     //     if(err){
     //         return err;
     //     }
     // }
 
+    uint8_t bytecode[] =
+        #include "example-program/bytecode/calc.c"
+        // #include "example-program/bytecode/hello-world.c"
+    ;
+
+    {
+        err_t err = lang$program_data_t$init_from_instruction_code(&context, bytecode, LENOF(bytecode));
+        if(err){
+            return err;
+        }
+    }
+
     while(true){
 
-        UNP(err, bool, exec_finished, lang$program_data_t$exec(ctx, 1));
+        UNP(err, bool, exec_finished, lang$program_data_t$exec(&context, 1));
 
         if(err){
             return err;
