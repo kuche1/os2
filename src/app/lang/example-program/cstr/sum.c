@@ -26,3 +26,5 @@
 
 "a +cell= ascii_0\n"
 "out$cell a\n"
+
+"sex 25\n"

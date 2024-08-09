@@ -3,9 +3,29 @@
 
 #define lang$init_from_cstr$INST_MAX_ARGS 10
 
+#define lang$ERR_MSG_LINE_REFERENCE_MAXLEN 40
+
 #include "compiler.c"
 
-err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_code, uint8_t * ic_code, size_t ic_code_cap){
+#define lang$COMPTIME_ERR(line, additional_code) \
+    out$cstr("comptime err: line `"); \
+    out$size(line); \
+    out$cstr("`: "); \
+    additional_code; \
+    out$nl(); \
+    return err$err;
+
+err_t lang$program_data_t$init_from_cstr$(
+    lang$program_data_t * ctx,
+    char * cstr_code, uint8_t * ic_code,
+    size_t ic_code_cap,
+    size_t * line_number, size_t * line_begin
+){
+
+    * line_number = 1;
+    bool time_to_increase_line_number = false;
+
+    * line_begin = 0;
 
     lang$compiler_t compiler;
     lang$compiler_t$init(&compiler);
@@ -23,13 +43,22 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
     char arguments[LENOF(word)][lang$init_from_cstr$INST_MAX_ARGS];
     size_t argument_lens[lang$init_from_cstr$INST_MAX_ARGS];
     size_t arguments_len = 0;
-    COMPTIME_ASSERT(LENOF(arguments) == lang$init_from_cstr$INST_MAX_ARGS); // TODO delete
 
     while(true){
 
         char ch = cstr_code[cstr_code_idx++];
         if(ch == 0){
             break;
+        }
+
+        if(time_to_increase_line_number){
+            time_to_increase_line_number = false;
+            * line_number += 1;
+            * line_begin = cstr_code_idx - 1;
+        }
+
+        if(ch == '\n'){
+            time_to_increase_line_number = true;
         }
 
         if((ch == ' ') || (ch == '\n')){
@@ -156,10 +185,48 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
     }
 
     if((word_len != 0) || (inst_len != 0) || (arguments_len != 0)){
-        out$cstr("something went wrong\n");
+        out$cstr("line formatted incorrectly\n");
         return err$err;
     }
 
     return lang$program_data_t$init_from_instruction_code(ctx, ic_code, ic_code_len);
 
+}
+
+err_t lang$program_data_t$init_from_cstr(
+    lang$program_data_t * ctx,
+    char * cstr_code, uint8_t * ic_code,
+    size_t ic_code_cap
+){
+
+    size_t line_number = 1;
+    size_t line_begin = 0;
+
+    err_t err = lang$program_data_t$init_from_cstr$(
+        ctx,
+        cstr_code, ic_code,
+        ic_code_cap,
+        &line_number, &line_begin
+    );
+
+    if(err){
+
+        out$cstr("compile time error on line `");
+        out$size(line_number);
+        out$cstr("`: `");
+
+        for(size_t idx=line_begin; idx<line_begin+lang$ERR_MSG_LINE_REFERENCE_MAXLEN; ++idx){
+            char ch = cstr_code[idx];
+            if((ch == 0) || (ch == '\n')){
+                break;
+            }
+            out$ch(ch);
+        }
+
+        out$cstr("`\n");
+
+        return err$err;
+    }
+
+    return err$ok;
 }
