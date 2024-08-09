@@ -138,7 +138,11 @@ err_t lang$program_data_t$init_from_cstr(lang$program_data_t * ctx, char * cstr_
 
             word_len = 0;
 
-            UNP(pcd_err, bool, is_compiler_directive, lang$compiler_t$process_directive(&compiler, inst, inst_len, arg, arg_len));
+            bool is_compiler_directive;
+            err_t pcd_err = lang$compiler_t$process_directive(
+                &compiler, inst, inst_len, arg, arg_len,
+                &is_compiler_directive
+            );
 
             if(pcd_err){
                 return pcd_err;

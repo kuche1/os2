@@ -85,15 +85,18 @@ err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_l
 
 }
 
-// true - this was a compiler directive that we just processed
-err_or_bool_t lang$compiler_t$process_directive(lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len){
+err_t lang$compiler_t$process_directive(
+    lang$compiler_t * ctx, char * inst, size_t inst_len, char * arg, size_t arg_len,
+    bool * out_compiler_directive_processed
+){
+
+    * out_compiler_directive_processed = false;
     
     if(strlen_sameas_cstr(inst, inst_len, "var")){
-
-        return (err_or_bool_t) {.err=lang$compiler_t$add_var(ctx, arg, arg_len), .data=true};
-
+        * out_compiler_directive_processed = true;
+        return lang$compiler_t$add_var(ctx, arg, arg_len);
     }
 
-    return (err_or_bool_t) {.err=err$OK, .data=false};
-
+    * out_compiler_directive_processed = false;
+    return err$OK;
 }

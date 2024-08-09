@@ -167,13 +167,13 @@ void lang$program_data_t$init(lang$program_data_t * ctx, lang$instruction_t * co
     ctx->instruction_index = 0;
 }
 
-// true - execution finished
-err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instructions_to_exec){
+err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instructions_to_exec, bool * out_execution_finished){
 
     while(number_of_instructions_to_exec-- > 0){
 
         if(ctx->instruction_index >= ctx->code_len){
-            return (err_or_bool_t) {.err = err$OK, .data = true};
+            * out_execution_finished = true;
+            return err$OK;
         }
 
         size_t inst_idx = ctx->instruction_index++;
@@ -181,7 +181,8 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
         lang$instruction_t inst = ctx->code[inst_idx];
 
         if(inst >= LENOF(lang$instruction_lookup)){
-            return (err_or_bool_t) {.err = err$ERR, .data = true};
+            * out_execution_finished = true;
+            return err$ERR;
         }
 
         lang$instruction_function_t fnc = lang$instruction_lookup[inst];
@@ -191,12 +192,14 @@ err_or_bool_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_
         if(instruction_failure){
             out$cstr("[instruction failure]\n");
             ctx->instruction_index = ctx->code_len;
-            return (err_or_bool_t) {.err = err$ERR, .data = true};
+            * out_execution_finished = true;
+            return err$ERR;
         }
 
     }
 
-    return (err_or_bool_t) {.err = err$OK, .data = false};
+    * out_execution_finished = false;
+    return err$OK;
 }
 
 ///

@@ -83,8 +83,9 @@ err_t lang$main(void){
     // }
 
     while(true){
-
-        UNP(err, bool, exec_finished, lang$program_data_t$exec(&context, 1));
+    
+        bool exec_finished;
+        err_t err = lang$program_data_t$exec(&context, 1, &exec_finished);
 
         if(err){
             return err;
