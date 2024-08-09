@@ -72,15 +72,16 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
     return err$OK;
 }
 
-err_or_u8_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_len){
+err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_len, uint8_t * out_var_addr){
 
     for(size_t idx=0; idx<ctx->vars_len; ++idx){
         if(strlen_sameas_strlen(name, name_len, ctx->vars[idx].name, ctx->vars[idx].name_len)){
-            return (err_or_u8_t) {.err=err$OK, .data=ctx->vars[idx].addr};
+            * out_var_addr = ctx->vars[idx].addr;
+            return err$OK;
         }
     }
 
-    return (err_or_u8_t) {.err=err$ERR, .data=0};
+    return err$ERR;
 
 }
 

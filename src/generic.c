@@ -73,11 +73,6 @@ typedef struct{
     bool data;
 }err_or_bool_t;
 
-typedef struct{
-    err_t err;
-    uint8_t data;
-}err_or_u8_t;
-
 ///
 ////// array
 ///
@@ -132,7 +127,7 @@ bool strlen_sameas_cstr(char * cstrlen, size_t cstrlen_len, char * cstr){
     return false; // this must be unreachable
 }
 
-err_or_u8_t strlen_to_u8(char * arg, size_t arg_len){
+err_t strlen_to_u8(char * arg, size_t arg_len, uint8_t * out_u8){
 
     uint8_t num = 0;
 
@@ -146,10 +141,11 @@ err_or_u8_t strlen_to_u8(char * arg, size_t arg_len){
             continue;
         }
 
-        return (err_or_u8_t) {.err=err$ERR, .data=0};
+        return err$ERR;
 
     }
 
-    return (err_or_u8_t) {.err=err$OK, .data=num};
+    * out_u8 = num;
+    return err$OK;
 
 }

@@ -17,31 +17,21 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
 
     uint8_t arg_u8;
     {
-        err_or_u8_t eor = strlen_to_u8(arg, arg_len);
+        err_t err = strlen_to_u8(arg, arg_len, & arg_u8);
 
-        if(eor.err){
+        if(err){
 
-            err_or_u8_t var_eor = lang$compiler_t$find_var(ctx, arg, arg_len);
+            err_t err_find = lang$compiler_t$find_var(ctx, arg, arg_len, & arg_u8);
 
-            if(var_eor.err){
+            if(err_find){
                 out$cstr("could not find variable `");
                 out$strlen(arg, arg_len);
                 out$cstr("`\n");
                 return err$ERR;
-            }else{
-                arg_u8 = var_eor.data;
-                // out$cstr("[dbg: found variable `");
-                // out$strlen(arg, arg_len);
-                // out$cstr("` and converted to number `");
-                // out$u8(arg_u8);
-                // out$cstr("`]");
             }
 
-        }else{
-            
-            arg_u8 = eor.data;
-
         }
+
     }
 
     // variable
@@ -49,9 +39,10 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
     // if some retard has overwritten certain addresses as variable names
 
     {
-        err_or_u8_t eod = lang$compiler_t$find_var(ctx, inst, inst_len);
+        uint8_t var_addr;
+        err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, & var_addr);
 
-        if(!eod.err){
+        if(!err){
             
             // out$cstr("[dbg: converted fake instruction `");
             // out$strlen(inst, inst_len);
@@ -67,7 +58,7 @@ err_t lang$translate_cstr_inst_to_bytecode_inst(
 
             * inst1_set = true;
             * inst1 = lang$ic$copy$0x00$cell;
-            * inst1_arg = eod.data;
+            * inst1_arg = var_addr;
 
             return err$OK;
 
