@@ -7,6 +7,8 @@ typedef struct{
     size_t name_len;
 
     uint8_t addr;
+
+    // TODO we could add a new enum for variable types
 }lang$varnamelen_addr_t;
 
 typedef struct{
