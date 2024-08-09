@@ -9,6 +9,8 @@ typedef struct{
     uint8_t addr;
 
     // TODO we could add a new enum for variable types
+    // "plain" values would be of type "any"
+    // values given by "getchar" should be "char"
 }lang$varnamelen_addr_t;
 
 typedef struct{
