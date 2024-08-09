@@ -1,0 +1,15 @@
+
+// prints "Hello World\n"
+
+"out$arg 72\n"
+"out$arg 101\n"
+"out$arg 108\n"
+"out$arg 108\n"
+"out$arg 111\n"
+"out$arg 32\n"
+"out$arg 87\n"
+"out$arg 111\n"
+"out$arg 114\n"
+"out$arg 108\n"
+"out$arg 100\n"
+"out$arg 10\n"
