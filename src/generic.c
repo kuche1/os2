@@ -24,6 +24,9 @@
 // some macro that prints and error message and returns
 // err$err
 
+// TODO we need to find a way to declare all err_t functions
+// with [[nodiscard]]
+
 typedef bool err_t;
 
 #define err$ok false
@@ -39,7 +42,7 @@ typedef bool err_t;
 ////// copy
 ///
 
-err_t copy(void * src, size_t src_size, void * dst, size_t dst_size, size_t number_of_bytes_to_copy){
+[[nodiscard]] err_t copy(void * src, size_t src_size, void * dst, size_t dst_size, size_t number_of_bytes_to_copy){
 
     if(src_size < number_of_bytes_to_copy){
         return err$err;
