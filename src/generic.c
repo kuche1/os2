@@ -15,28 +15,48 @@
 #define LENOF(arr) \
     ( sizeof(arr) / sizeof(*arr) )
 
-///
-////// copy
-///
-
-// TODO make another version of this that checks both var ranges
-// keep in mind: this is called `copy` not `copy_partial`
-void copy(const void * src, void * dst, size_t number_of_bytes_to_copy){
-    uint8_t * dst_u8 = dst;
-    const uint8_t * src_u8 = src;
-    for(size_t i=0; i<number_of_bytes_to_copy; ++i){
-        dst_u8[i] = src_u8[i];
-    }
-}
 
 ///
 ////// error
 ///
 
+// TODO since we have standardised this, we can now make
+// some macro that prints and error message and returns
+// err$err
+
 typedef bool err_t;
 
 #define err$ok false
 #define err$err true
+
+#define err$CHECK(fnc, err_msg) \
+    if((fnc) == err$err){ \
+        out$cstr(err_msg); \
+        return err$err; \
+    }
+
+///
+////// copy
+///
+
+err_t copy(void * src, size_t src_size, void * dst, size_t dst_size, size_t number_of_bytes_to_copy){
+
+    if(src_size < number_of_bytes_to_copy){
+        return err$err;
+    }
+
+    if(dst_size < number_of_bytes_to_copy){
+        return err$err;
+    }
+
+    uint8_t * dst_u8 = dst;
+    uint8_t * src_u8 = src;
+    for(size_t i=0; i<number_of_bytes_to_copy; ++i){
+        dst_u8[i] = src_u8[i];
+    }
+
+    return err$ok;
+}
 
 ///
 ////// array

@@ -39,14 +39,15 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
         return err$err;
     }
 
-    if(name_len > LENOF(ctx->vars[ctx->vars_len].name)){
-        out$cstr("variable name too long `");
-        out$strlen(name, name_len);
-        out$cstr("`\n");
-        return err$err;
+    {
+        err_t err = copy(name, name_len, ctx->vars[ctx->vars_len].name, sizeof(ctx->vars[ctx->vars_len].name), name_len);
+        if(err){
+            out$cstr("could not copy variable name `");
+            out$strlen(name, name_len);
+            out$cstr("`\n");
+            return err$err;
+        }
     }
-
-    copy(name, ctx->vars[ctx->vars_len].name, name_len);
     ctx->vars[ctx->vars_len].name_len = name_len;
     ctx->vars[ctx->vars_len].addr = ctx->next_var_addr;
 
