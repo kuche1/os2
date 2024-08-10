@@ -1,6 +1,17 @@
 
 #define lang$program_data_t$init_from_cstr$MAX_NUMBER_OF_VARS 10
 
+#define lang$CHECK_NARGS_OR_ERR(required_nargs, actual_nargs){ \
+    if(required_nargs != actual_nargs){ \
+        out$cstr("bad number of arguments: required=`"); \
+        out$size(required_nargs); \
+        out$cstr("` actual=`"); \
+        out$size(actual_nargs); \
+        out$cstr("`\n"); \
+        return err$err; \
+    } \
+}
+
 #define lang$CHECK_TYPE_SAME_OR_ERR(base_type, comparing_type){ \
     if(base_type != comparing_type){ \
         out$cstr("type missmatch: base=`"); \
@@ -226,18 +237,12 @@ err_t lang$compiler_t$compile_instruction(
 
     if(strlen_sameas_cstr(inst, inst_len, "var")){
 
-        if(arguments_len != 1){
-            out$cstr("bad number of arguments (a)\n"); // TODO this message shouldnt be in 3 places
-            return err$err;
-        }
+        lang$CHECK_NARGS_OR_ERR(1, arguments_len);
         return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0], lang$VT_UNDECIDED);
 
     }else if(strlen_sameas_cstr(inst, inst_len, "cast")){
 
-        if(arguments_len != 2){
-            out$cstr("bad number of arguments (d)\n");
-            return err$err;
-        }
+        lang$CHECK_NARGS_OR_ERR(2, arguments_len);
 
         uint8_t var_addr;
         lang$var_type_t * addr_var_type;
@@ -379,17 +384,14 @@ err_t lang$compiler_t$compile_instruction(
 
         }
 
-        out$cstr("bad number of arguments (b)\n");
+        out$cstr("bad number of arguments\n");
         return err$err;
 
     }while(false);
 
     // actual instruction
 
-    if(arguments_len != 1){
-        out$cstr("bad number of arguments (c)\n");
-        return err$err;
-    }
+    lang$CHECK_NARGS_OR_ERR(1, arguments_len);
 
     uint8_t arg_value;
     lang$var_type_t arg_type;
