@@ -90,6 +90,7 @@ err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
     // }
     uint8_t val = ctx->mem[arg];
     if(val == 0){ // not sure if this is the correct cource of action
+        out$cstr("division by zero\n");
         return err$err;
     }
     ctx->mem[0x00] /= val;
@@ -99,6 +100,11 @@ err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
 err_t lang$if$copy$arg$0x00(lang$program_data_t * ctx, uint8_t arg){
     ctx->mem[0x00] = arg;
     return err$ok;
+}
+
+err_t lang$if$unreachable(__attribute__((unused)) lang$program_data_t * ctx, __attribute__((unused)) uint8_t arg){
+    out$cstr("unreachable instruction reached\n");
+    return err$err;
 }
 
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);
@@ -206,6 +212,10 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$if$0x03$skipinst$cell,
     // lang$if$if$0x03$skipinst$ptrcell,
 
+    // special (not real instructions)
+    lang$if$unreachable,
+    lang$if$unreachable,
+
 };
 
 typedef enum{
@@ -310,6 +320,10 @@ typedef enum{
     // lang$ic$if$0x03$skipinst$arg,
     // lang$ic$if$0x03$skipinst$cell,
     // lang$ic$if$0x03$skipinst$ptrcell,
+
+    // special (not real instructions)
+    lang$ic$code_block_begin,
+    lang$ic$code_block_end,
 
     lang$ic$len,
 

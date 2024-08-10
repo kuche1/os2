@@ -395,8 +395,6 @@ err_t lang$compiler_t$compile_instruction(
         * inst0 = lang$ic$out$arg;
         * inst0_arg = arg_value;
 
-        return err$ok;
-
     }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
 
         lang$CHECK_NARGS_OR_ERR(1, arguments_len, "e");
@@ -413,32 +411,25 @@ err_t lang$compiler_t$compile_instruction(
         * inst0 = lang$ic$out$cell;
         * inst0_arg = arg_value;
 
-        return err$ok;
-
     }else if(strlen_sameas_cstr(inst, inst_len, "ifskip")){
-
-        out$cstr("instruction `ifskip` is bugged right now, so do not use it\n");
-        return err$err;
 
         lang$CHECK_NARGS_OR_ERR(2, arguments_len, "f");
 
         uint8_t var_addr;
         lang$var_type_t * addr_var_type;
         if(lang$compiler_t$find_var(ctx, arguments[0], argument_lens[0], &var_addr, &addr_var_type)){
-            out$cstr("[dbg: 1]\n");
+            out$cstr("variable doesn't exist `");
+            out$strlen(arguments[0], argument_lens[0]);
+            out$cstr("`\n");
             return err$err;
         }
 
         lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
 
-        uint8_t arg_value;
-        lang$var_type_t arg_type;
-        if(lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type)){
-            out$cstr("[dbg: 2]\n");
+        if(!strlen_sameas_cstr(arguments[1], argument_lens[1], "{")){
+            out$cstr("second argument must be `{` in this case\n");
             return err$err;
         }
-
-        lang$CHECK_TYPE_SAME_OR_ERR(lang$VT_UNDECIDED, arg_type)
 
         * inst0_set = true;
         * inst1 = lang$ic$copy$cell$0x00;
@@ -446,17 +437,31 @@ err_t lang$compiler_t$compile_instruction(
 
         * inst1_set = true;
         * inst1 = lang$ic$if$0x00$skipinst$arg;
-        * inst1_arg = arg_value;
+        * inst1_arg = 0; // this will be set by the code blocks later
 
-        return err$ok;
+        * inst2_set = true;
+        * inst2 = lang$ic$code_block_begin;
+        * inst2_arg = 0; // ignored
+
+    }else if(strlen_sameas_cstr(inst, inst_len, "}")){
+
+        lang$CHECK_NARGS_OR_ERR(0, arguments_len, "g");
+
+        * inst0_set = true;
+        * inst0 = lang$ic$code_block_end;
+        * inst0_arg = 0; // ignored
+
+    }else{
+
+        // unknown
+
+        out$cstr("unknown instruction `");
+        out$strlen(inst, inst_len);
+        out$cstr("`\n");
+
+        return err$err;
 
     }
 
-    // unknown
-
-    out$cstr("unknown instruction `");
-    out$strlen(inst, inst_len);
-    out$cstr("`\n");
-
-    return err$err;
+    return err$ok;
 }

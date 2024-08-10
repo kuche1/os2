@@ -35,6 +35,7 @@ typedef bool err_t;
 #define err$CHECK(fnc, err_msg) \
     if((fnc) == err$err){ \
         out$cstr(err_msg); \
+        out$nl(); \
         return err$err; \
     }
 
@@ -43,6 +44,14 @@ typedef bool err_t;
     out$cstr(identifier); \
     out$cstr(")\n"); \
     return err$err;
+
+#define ASSERT(cond, identifier) \
+    if(!(cond)){ \
+        out$cstr("assertion failed ("); \
+        out$cstr(identifier); \
+        out$cstr(")\n"); \
+        return err$err; \
+    }
 
 ///
 ////// copy

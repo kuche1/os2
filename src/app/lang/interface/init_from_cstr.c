@@ -64,26 +64,40 @@ err_t lang$program_data_t$init_from_cstr$(
         if((ch == ' ') || (ch == '\n')){
 
             if(word_len <= 0){
+                if(inst_len != 0){
+                    UNREACHABLE("c");
+                }
                 continue;
             }
+
+            bool word_copied = false;
 
             if(inst_len == 0){
-                err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail (a)\n");
+
+                err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail (a)" );
                 inst_len = word_len;
                 word_len = 0;
-                continue;
+
+                word_copied = true;
+
             }
 
-            if(arguments_len >= LENOF(arguments)){
-                out$cstr("too many arguments\n");
-                return err$err;
+            if(!word_copied){
+
+                if(arguments_len >= LENOF(arguments)){
+                    out$cstr("too many arguments\n");
+                    return err$err;
+                }
+
+                err$CHECK( copy(word, word_len, arguments[arguments_len], sizeof(arguments[arguments_len]), word_len) , "copy fail (b)" );
+                argument_lens[arguments_len] = word_len;
+
+                arguments_len += 1;
+                word_len = 0;
+
+                word_copied = true;
+
             }
-
-            err$CHECK( copy(word, word_len, arguments[arguments_len], sizeof(arguments[arguments_len]), word_len) , "copy fail (b)\n");
-            argument_lens[arguments_len] = word_len;
-
-            arguments_len += 1;
-            word_len = 0;
 
             if(ch != '\n'){
                 continue;
