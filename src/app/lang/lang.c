@@ -58,6 +58,7 @@ err_t lang$main(void){
         // #include "example-program/cstr/hello-world.c"
         // #include "example-program/cstr/variable.c"
         #include "example-program/cstr/sum.c"
+        // #include "example-program/cstr/calc.c"
     ;
 
     size_t bytecode_maxlen = 80;

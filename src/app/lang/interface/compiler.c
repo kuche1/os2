@@ -217,7 +217,7 @@ err_t lang$compiler_t$get_arg_value(
 err_t lang$compiler_t$compile_instruction(
     lang$compiler_t * ctx,
     char * inst, size_t inst_len,
-    char arguments[lang$init_from_cstr$WORD_MAXLEN][lang$init_from_cstr$INST_MAX_ARGS], size_t * argument_lens, size_t arguments_len, // the array is passed by reference
+    char arguments[lang$init_from_cstr$INST_MAX_ARGS][lang$init_from_cstr$WORD_MAXLEN], size_t * argument_lens, size_t arguments_len, // the array is passed by reference
     bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
     bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg,
     bool * inst2_set, uint8_t * inst2, uint8_t * inst2_arg

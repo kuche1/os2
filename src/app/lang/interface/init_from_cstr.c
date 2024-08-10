@@ -1,5 +1,5 @@
 
-#define lang$init_from_cstr$WORD_MAXLEN 10
+#define lang$init_from_cstr$WORD_MAXLEN 20
 
 #define lang$init_from_cstr$INST_MAX_ARGS 10
 
@@ -40,7 +40,7 @@ err_t lang$program_data_t$init_from_cstr$(
     char inst[LENOF(word)];
     size_t inst_len = 0;
 
-    char arguments[LENOF(word)][lang$init_from_cstr$INST_MAX_ARGS];
+    char arguments[lang$init_from_cstr$INST_MAX_ARGS][LENOF(word)];
     size_t argument_lens[lang$init_from_cstr$INST_MAX_ARGS];
     size_t arguments_len = 0;
 
@@ -68,7 +68,7 @@ err_t lang$program_data_t$init_from_cstr$(
             }
 
             if(inst_len == 0){
-                err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail\n");
+                err$CHECK( copy(word, word_len, inst, sizeof(inst), word_len) , "copy fail (a)\n");
                 inst_len = word_len;
                 word_len = 0;
                 continue;
@@ -79,7 +79,7 @@ err_t lang$program_data_t$init_from_cstr$(
                 return err$err;
             }
 
-            err$CHECK( copy(word, word_len, arguments[arguments_len], sizeof(arguments[arguments_len]), word_len) , "copy fail\n");
+            err$CHECK( copy(word, word_len, arguments[arguments_len], sizeof(arguments[arguments_len]), word_len) , "copy fail (b)\n");
             argument_lens[arguments_len] = word_len;
 
             arguments_len += 1;
