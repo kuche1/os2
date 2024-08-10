@@ -115,6 +115,17 @@ err_t lang$if$not$cell(lang$program_data_t * ctx, uint8_t cell_addr){
     return err$ok;
 }
 
+err_t lang$if$mul$0x00$arg(lang$program_data_t * ctx, uint8_t value){
+    ctx->mem[0x00] *= value;
+    return err$ok;
+}
+
+err_t lang$if$div$0x00$arg(lang$program_data_t * ctx, uint8_t value){
+    ASSERT(value != 0, "division by zero");
+    ctx->mem[0x00] /= value;
+    return err$ok;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
@@ -138,9 +149,6 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$copy$arg$0x02,
     // lang$if$copy$cell$0x02,
     // lang$if$copy$ptrcell$0x02,
-    // lang$if$copy$arg$0x03,
-    // lang$if$copy$cell$0x03,
-    // lang$if$copy$ptrcell$0x03,
 
     // // copy to
     lang$if$copy$0x00$cell,
@@ -149,8 +157,6 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$copy$0x01$ptrcell,
     // lang$if$copy$0x02$cell,
     // lang$if$copy$0x02$ptrcell,
-    // lang$if$copy$0x03$cell,
-    // lang$if$copy$0x03$ptrcell,
 
     // logical
     lang$if$not$cell,
@@ -163,10 +169,10 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     lang$if$sub$0x00$arg,
     lang$if$sub$0x00$cell,
     // lang$if$sub$0x00$ptrcell,
-    // lang$if$mul$0x00$arg,
+    lang$if$mul$0x00$arg,
     lang$if$mul$0x00$cell,
     // lang$if$mul$0x00$ptrcell,
-    // lang$if$div$0x00$arg,
+    lang$if$div$0x00$arg,
     lang$if$div$0x00$cell,
     // lang$if$div$0x00$ptrcell,
     // // 0x01
@@ -195,19 +201,6 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$div$0x02$arg,
     // lang$if$div$0x02$cell,
     // lang$if$div$0x02$ptrcell,
-    // // 0x03
-    // lang$if$add$0x03$arg,
-    // lang$if$add$0x03$cell,
-    // lang$if$add$0x03$ptrcell,
-    // lang$if$sub$0x03$arg,
-    // lang$if$sub$0x03$cell,
-    // lang$if$sub$0x03$ptrcell,
-    // lang$if$mul$0x03$arg,
-    // lang$if$mul$0x03$cell,
-    // lang$if$mul$0x03$ptrcell,
-    // lang$if$div$0x03$arg,
-    // lang$if$div$0x03$cell,
-    // lang$if$div$0x03$ptrcell,
 
     // // if
     lang$if$if$0x00$skipinst$arg,
@@ -219,9 +212,6 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$if$0x02$skipinst$arg,
     // lang$if$if$0x02$skipinst$cell,
     // lang$if$if$0x02$skipinst$ptrcell,
-    // lang$if$if$0x03$skipinst$arg,
-    // lang$if$if$0x03$skipinst$cell,
-    // lang$if$if$0x03$skipinst$ptrcell,
 
     // special (not real instructions)
     lang$if$unreachable,
@@ -250,9 +240,6 @@ typedef enum{
     // lang$ic$copy$arg$0x02,
     // lang$ic$copy$cell$0x02,
     // lang$ic$copy$ptrcell$0x02,
-    // lang$ic$copy$arg$0x03,
-    // lang$ic$copy$cell$0x03,
-    // lang$ic$copy$ptrcell$0x03,
 
     // // copy to
     lang$ic$copy$0x00$cell,
@@ -261,8 +248,6 @@ typedef enum{
     // lang$ic$copy$0x01$ptrcell,
     // lang$ic$copy$0x02$cell,
     // lang$ic$copy$0x02$ptrcell,
-    // lang$ic$copy$0x03$cell,
-    // lang$ic$copy$0x03$ptrcell,
 
     // logical
     lang$ic$not$cell,
@@ -275,10 +260,10 @@ typedef enum{
     lang$ic$sub$0x00$arg,
     lang$ic$sub$0x00$cell,
     // lang$ic$sub$0x00$ptrcell,
-    // lang$ic$mul$0x00$arg,
+    lang$ic$mul$0x00$arg,
     lang$ic$mul$0x00$cell,
     // lang$ic$mul$0x00$ptrcell,
-    // lang$ic$div$0x00$arg,
+    lang$ic$div$0x00$arg,
     lang$ic$div$0x00$cell,
     // lang$ic$div$0x00$ptrcell,
     // // 0x01
@@ -307,19 +292,6 @@ typedef enum{
     // lang$ic$div$0x02$arg,
     // lang$ic$div$0x02$cell,
     // lang$ic$div$0x02$ptrcell,
-    // // 0x03
-    // lang$ic$add$0x03$arg,
-    // lang$ic$add$0x03$cell,
-    // lang$ic$add$0x03$ptrcell,
-    // lang$ic$sub$0x03$arg,
-    // lang$ic$sub$0x03$cell,
-    // lang$ic$sub$0x03$ptrcell,
-    // lang$ic$mul$0x03$arg,
-    // lang$ic$mul$0x03$cell,
-    // lang$ic$mul$0x03$ptrcell,
-    // lang$ic$div$0x03$arg,
-    // lang$ic$div$0x03$cell,
-    // lang$ic$div$0x03$ptrcell,
 
     // // if
     lang$ic$if$0x00$skipinst$arg,
@@ -331,9 +303,6 @@ typedef enum{
     // lang$ic$if$0x02$skipinst$arg,
     // lang$ic$if$0x02$skipinst$cell,
     // lang$ic$if$0x02$skipinst$ptrcell,
-    // lang$ic$if$0x03$skipinst$arg,
-    // lang$ic$if$0x03$skipinst$cell,
-    // lang$ic$if$0x03$skipinst$ptrcell,
 
     // special (not real instructions)
     lang$ic$code_block_begin,

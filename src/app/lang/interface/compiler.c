@@ -36,6 +36,16 @@
     } \
 }
 
+#define lang$CHECK_TYPE_DEREF_OR_ERR(base_type, comparing_type){ \
+    lang$var_type_t _ptr_type_of_comparing_type; \
+    if(lang$ptr_type_of(comparing_type, &_ptr_type_of_comparing_type)){ \
+        ASSERT(0, "I'm tired and can't be bothered to leave an appropriate error message here (a)"); \
+    } \
+    if(base_type != _ptr_type_of_comparing_type){ \
+        ASSERT(0, "I'm tired and can't be bothered to leave an appropriate error message here (b)"); \
+    } \
+}
+
 #define lang$CHECK_TYPE_PTR_OR_ERR(type){ \
     if(!lang$is_ptr_type(type)){ \
         out$cstr("pointer type required, instead got `"); \
@@ -204,6 +214,9 @@ err_t lang$compiler_t$get_arg_value(
     char * arg, size_t arg_len,
     uint8_t * out_value, lang$var_type_t * out_type
 ){
+    
+    // "raw" value
+    
     {
         err_t err = strlen_to_u8(arg, arg_len, out_value);
         if(!err){
@@ -211,6 +224,20 @@ err_t lang$compiler_t$get_arg_value(
             return err$ok;
         }
     }
+
+    // character
+
+    if(strlen_startswith_cstr(arg, arg_len, "$")){
+        if(arg_len != 2){
+            out$cstr("single character literals must consist of SINGLE CHARACTER\n");
+            return err$err;
+        }
+        * out_value = (uint8_t) arg[1];
+        * out_type = lang$VT_CHAR;
+        return err$ok;
+    }
+
+    // variable
 
     lang$var_type_t * addr_variable_type;
     err_t err = lang$compiler_t$find_var(ctx, arg, arg_len, out_value, &addr_variable_type);
@@ -361,7 +388,18 @@ err_t lang$compiler_t$compile_instruction(
         ){
 
             lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
-            lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
+
+            
+
+            bool arg_is_ptr;
+
+            if(lang$is_ptr_type(arg_type)){
+                arg_is_ptr = true;
+                lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
+            }else{
+                arg_is_ptr = false;
+                lang$CHECK_TYPE_DEREF_OR_ERR(*addr_var_type, arg_type);
+            }
 
             * inst0_set = true;
             * inst0 = lang$ic$copy$cell$0x00;
@@ -370,13 +408,29 @@ err_t lang$compiler_t$compile_instruction(
             * inst1_set = true;
             * inst1_arg = arg_value;
             if(is_plusequ){
-                * inst1 = lang$ic$add$0x00$cell;
+                if(arg_is_ptr){
+                    * inst1 = lang$ic$add$0x00$cell;
+                }else{
+                    * inst1 = lang$ic$add$0x00$arg;
+                }
             }else if(is_minuseq){
-                * inst1 = lang$ic$sub$0x00$cell;
+                if(arg_is_ptr){
+                    * inst1 = lang$ic$sub$0x00$cell;
+                }else{
+                    * inst1 = lang$ic$sub$0x00$arg;
+                }
             }else if(is_muleq){
-                * inst1 = lang$ic$mul$0x00$cell;
+                if(arg_is_ptr){
+                    * inst1 = lang$ic$mul$0x00$cell;
+                }else{
+                    * inst1 = lang$ic$mul$0x00$arg;
+                }
             }else if(is_diveq){
-                * inst1 = lang$ic$div$0x00$cell;
+                if(arg_is_ptr){
+                    * inst1 = lang$ic$div$0x00$cell;
+                }else{
+                    * inst1 = lang$ic$div$0x00$arg;
+                }
             }else{
                 UNREACHABLE("a");
             }

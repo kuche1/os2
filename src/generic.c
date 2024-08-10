@@ -152,3 +152,20 @@ err_t strlen_to_u8(char * arg, size_t arg_len, uint8_t * out_u8){
     return err$ok;
 
 }
+
+bool strlen_startswith_cstr(char * strl, size_t strl_len, char * cstr){
+    for(size_t idx=0; idx<strl_len; ++idx){
+        char ch_strl = strl[idx];
+        char ch_cstr = *cstr++;
+        if(!ch_cstr){
+            return true;
+        }
+        if(ch_strl != ch_cstr){
+            return false;
+        }
+    }
+    if(!(*cstr)){
+        return true;
+    }
+    return false;
+}
