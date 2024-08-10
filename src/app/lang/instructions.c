@@ -135,11 +135,11 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     lang$if$out$cell,
     // lang$if$out$ptrcell,
 
-    // // input
+    // input
     lang$if$in$cell,
     // lang$if$in$ptrcell,
 
-    // // copy from
+    // copy from
     lang$if$copy$arg$0x00,
     lang$if$copy$cell$0x00,
     // lang$if$copy$ptrcell$0x00,
@@ -150,7 +150,7 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$copy$cell$0x02,
     // lang$if$copy$ptrcell$0x02,
 
-    // // copy to
+    // copy to
     lang$if$copy$0x00$cell,
     // lang$if$copy$0x00$ptrcell,
     // lang$if$copy$0x01$cell,
@@ -161,8 +161,8 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // logical
     lang$if$not$cell,
 
-    // //// arithmetic
-    // // 0x00
+    //// arithmetic
+    // 0x00
     lang$if$add$0x00$arg,
     lang$if$add$0x00$cell,
     // lang$if$add$0x00$ptrcell,
@@ -202,7 +202,7 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$div$0x02$cell,
     // lang$if$div$0x02$ptrcell,
 
-    // // if
+    // if
     lang$if$if$0x00$skipinst$arg,
     // lang$if$if$0x00$skipinst$cell,
     // lang$if$if$0x00$skipinst$ptrcell,
@@ -226,11 +226,11 @@ typedef enum{
     lang$ic$out$cell,
     // lang$ic$out$ptrcell,
 
-    // // input
+    // input
     lang$ic$in$cell,
     // lang$ic$in$ptrcell,
 
-    // // copy from
+    // copy from
     lang$ic$copy$arg$0x00,
     lang$ic$copy$cell$0x00,
     // lang$ic$copy$ptrcell$0x00,
@@ -241,7 +241,7 @@ typedef enum{
     // lang$ic$copy$cell$0x02,
     // lang$ic$copy$ptrcell$0x02,
 
-    // // copy to
+    // copy to
     lang$ic$copy$0x00$cell,
     // lang$ic$copy$0x00$ptrcell,
     // lang$ic$copy$0x01$cell,
@@ -252,8 +252,8 @@ typedef enum{
     // logical
     lang$ic$not$cell,
 
-    // //// arithmetic
-    // // 0x00
+    //// arithmetic
+    // 0x00
     lang$ic$add$0x00$arg,
     lang$ic$add$0x00$cell,
     // lang$ic$add$0x00$ptrcell,
@@ -293,7 +293,7 @@ typedef enum{
     // lang$ic$div$0x02$cell,
     // lang$ic$div$0x02$ptrcell,
 
-    // // if
+    // if
     lang$ic$if$0x00$skipinst$arg,
     // lang$ic$if$0x00$skipinst$cell,
     // lang$ic$if$0x00$skipinst$ptrcell,
