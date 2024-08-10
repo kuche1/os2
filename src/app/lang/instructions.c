@@ -107,6 +107,14 @@ err_t lang$if$unreachable(__attribute__((unused)) lang$program_data_t * ctx, __a
     return err$err;
 }
 
+err_t lang$if$not$cell(lang$program_data_t * ctx, uint8_t cell_addr){
+    // if(arg >= LENOF(ctx->mem)){
+    //     return err$err;
+    // }
+    ctx->mem[cell_addr] = !ctx->mem[cell_addr];
+    return err$ok;
+}
+
 typedef err_t (* lang$instruction_function_t) (lang$program_data_t *, uint8_t);
 
 lang$instruction_function_t lang$instruction_lookup[] = {
@@ -143,6 +151,9 @@ lang$instruction_function_t lang$instruction_lookup[] = {
     // lang$if$copy$0x02$ptrcell,
     // lang$if$copy$0x03$cell,
     // lang$if$copy$0x03$ptrcell,
+
+    // logical
+    lang$if$not$cell,
 
     // //// arithmetic
     // // 0x00
@@ -252,6 +263,9 @@ typedef enum{
     // lang$ic$copy$0x02$ptrcell,
     // lang$ic$copy$0x03$cell,
     // lang$ic$copy$0x03$ptrcell,
+
+    // logical
+    lang$ic$not$cell,
 
     // //// arithmetic
     // // 0x00

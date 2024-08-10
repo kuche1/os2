@@ -47,6 +47,7 @@
 
 typedef enum{
     lang$VT_UNDECIDED,
+    lang$VT_PTR_UNDECIDED,
     lang$VT_CHAR,
     lang$VT_PTR_CHAR,
 }lang$var_type_t;
@@ -55,6 +56,9 @@ void lang$print_type(lang$var_type_t type){
     switch(type){
         case lang$VT_UNDECIDED:
             out$cstr("undecided");
+            break;
+        case lang$VT_PTR_UNDECIDED:
+            out$cstr("ptr-undecided");
             break;
         case lang$VT_CHAR:
             out$cstr("char");
@@ -70,6 +74,7 @@ bool lang$is_ptr_type(lang$var_type_t type){
         case lang$VT_UNDECIDED:
         case lang$VT_CHAR:
             return false;
+        case lang$VT_PTR_UNDECIDED:
         case lang$VT_PTR_CHAR:
             return true;
     }
@@ -79,14 +84,20 @@ bool lang$is_ptr_type(lang$var_type_t type){
 
 err_t lang$ptr_type_of(lang$var_type_t type, lang$var_type_t * out){
     switch(type){
+
         case lang$VT_UNDECIDED:
-            return err$err;
+            * out = lang$VT_PTR_UNDECIDED;
+            return err$ok;
+
         case lang$VT_CHAR:
             * out = lang$VT_PTR_CHAR;
             return err$ok;
+
+        case lang$VT_PTR_UNDECIDED:
         case lang$VT_PTR_CHAR:
             return err$err;
     }
+
     out$cstr("unreachable\n");
     return err$err; // unreachable
 }
@@ -222,12 +233,14 @@ err_t lang$compiler_t$compile_instruction(
     char arguments[lang$init_from_cstr$INST_MAX_ARGS][lang$init_from_cstr$WORD_MAXLEN], size_t * argument_lens, size_t arguments_len, // the array is passed by reference
     bool * inst0_set, uint8_t * inst0, uint8_t * inst0_arg,
     bool * inst1_set, uint8_t * inst1, uint8_t * inst1_arg,
-    bool * inst2_set, uint8_t * inst2, uint8_t * inst2_arg
+    bool * inst2_set, uint8_t * inst2, uint8_t * inst2_arg,
+    bool * inst3_set, uint8_t * inst3, uint8_t * inst3_arg
 ){
 
     * inst0_set = false;
     * inst1_set = false;
     * inst2_set = false;
+    * inst3_set = false;
 
     // compiler directive
 
@@ -235,7 +248,7 @@ err_t lang$compiler_t$compile_instruction(
 
         // TODO? make sure it's 0
         lang$CHECK_NARGS_OR_ERR(1, arguments_len, "a");
-        return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0], lang$VT_UNDECIDED);
+        return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0], lang$VT_PTR_UNDECIDED);
 
     }else if(strlen_sameas_cstr(inst, inst_len, "cast")){
 
@@ -286,6 +299,8 @@ err_t lang$compiler_t$compile_instruction(
 
         lang$CHECK_NARGS_OR_ERR(2, arguments_len, "c");
 
+        ASSERT(lang$is_ptr_type(*addr_var_type), "d");
+
         if(strlen_sameas_cstr(arguments[0], argument_lens[0], "=")){
 
             // special assignment case
@@ -311,7 +326,12 @@ err_t lang$compiler_t$compile_instruction(
             lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(*addr_var_type, arg_type);
     
             * inst0_set = true;
-            * inst0 = lang$ic$copy$arg$0x00;
+            if(arg_type == lang$VT_UNDECIDED){
+                * inst0 = lang$ic$copy$arg$0x00;
+            }else if(arg_type == *addr_var_type){
+                ASSERT(lang$is_ptr_type(arg_type), "f");
+                * inst0 = lang$ic$copy$cell$0x00;
+            }
             * inst0_arg = arg_value;
 
             * inst1_set = true;
@@ -411,7 +431,10 @@ err_t lang$compiler_t$compile_instruction(
         * inst0 = lang$ic$out$cell;
         * inst0_arg = arg_value;
 
-    }else if(strlen_sameas_cstr(inst, inst_len, "ifskip")){
+    }else if(
+        strlen_sameas_cstr(inst, inst_len, "if") ||
+        strlen_sameas_cstr(inst, inst_len, "if!")
+    ){
 
         lang$CHECK_NARGS_OR_ERR(2, arguments_len, "f");
 
@@ -432,16 +455,22 @@ err_t lang$compiler_t$compile_instruction(
         }
 
         * inst0_set = true;
-        * inst1 = lang$ic$copy$cell$0x00;
-        * inst1_arg = var_addr;
+        * inst0 = lang$ic$copy$cell$0x00;
+        * inst0_arg = var_addr;
 
-        * inst1_set = true;
-        * inst1 = lang$ic$if$0x00$skipinst$arg;
-        * inst1_arg = 0; // this will be set by the code blocks later
+        if(strlen_sameas_cstr(inst, inst_len, "if")){
+            * inst1_set = true;
+            * inst1 = lang$ic$not$cell;
+            * inst1_arg = 0x00;
+        }
 
         * inst2_set = true;
-        * inst2 = lang$ic$code_block_begin;
-        * inst2_arg = 0; // ignored
+        * inst2 = lang$ic$if$0x00$skipinst$arg;
+        * inst2_arg = 0; // this will be set by the code blocks later
+
+        * inst3_set = true;
+        * inst3 = lang$ic$code_block_begin;
+        * inst3_arg = 0; // ignored
 
     }else if(strlen_sameas_cstr(inst, inst_len, "}")){
 

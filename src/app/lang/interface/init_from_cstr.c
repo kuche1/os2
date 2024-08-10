@@ -115,13 +115,18 @@ err_t lang$program_data_t$init_from_cstr$(
             uint8_t inst2;
             uint8_t inst2_arg;
 
+            bool inst3_set = false;
+            uint8_t inst3;
+            uint8_t inst3_arg;
+
             err_t err = lang$compiler_t$compile_instruction(
                 &compiler,
                 inst, inst_len,
                 arguments, argument_lens, arguments_len,
                 &inst0_set, &inst0, &inst0_arg,
                 &inst1_set, &inst1, &inst1_arg,
-                &inst2_set, &inst2, &inst2_arg
+                &inst2_set, &inst2, &inst2_arg,
+                &inst3_set, &inst3, &inst3_arg
             );
 
             if(err){
@@ -179,6 +184,24 @@ err_t lang$program_data_t$init_from_cstr$(
                 }
 
                 ic_code[ic_code_len++] = inst2_arg;
+
+            }
+
+            if(inst3_set){
+
+                if(ic_code_len >= ic_code_cap){
+                    out$cstr("bytecode capacity reached (instruction)\n");
+                    return err$err;
+                }
+
+                ic_code[ic_code_len++] = inst3;
+
+                if(ic_code_len >= ic_code_cap){
+                    out$cstr("bytecode capacity reached (argument)\n");
+                    return err$err;
+                }
+
+                ic_code[ic_code_len++] = inst3_arg;
 
             }
 
