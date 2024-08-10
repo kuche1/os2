@@ -287,11 +287,13 @@ err_t lang$compiler_t$compile_instruction(
             }
         }
 
-        if(arguments_len == 1){ // variable assignment
+        lang$CHECK_NARGS_OR_ERR(2, arguments_len);
+
+        if(strlen_sameas_cstr(arguments[0], argument_lens[0], "=")){
 
             // special assignment case
 
-            if(strlen_sameas_cstr(arguments[0], argument_lens[0], "$getchar")){
+            if(strlen_sameas_cstr(arguments[1], argument_lens[1], "$getchar")){
                 lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(lang$VT_PTR_CHAR, *addr_var_type);
                 * addr_var_type = lang$VT_PTR_CHAR;
                 * inst0_set = true;
@@ -304,15 +306,11 @@ err_t lang$compiler_t$compile_instruction(
 
             uint8_t arg_value;
             lang$var_type_t arg_type;
-            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
+            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type);
             if(err){
                 return err;
             }
 
-            // if((arg_type != lang$VT_UNDECIDED) && (*addr_var_type != arg_type)){
-            //     out$cstr("cannot assign missmatched type to variable");
-            //     return err$err;
-            // }
             lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(*addr_var_type, arg_type);
     
             * inst0_set = true;
@@ -326,65 +324,57 @@ err_t lang$compiler_t$compile_instruction(
             return err$ok;
 
         }
-        
-        if(arguments_len == 2){
 
-            uint8_t arg_value;
-            lang$var_type_t arg_type;
-            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type);
-            if(err){
-                return err;
-            }
+        uint8_t arg_value;
+        lang$var_type_t arg_type;
+        err_t err = lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type);
+        if(err){
+            return err;
+        }
 
-            // if we had types system we could ommit the stupid "cell"
-            if(strlen_sameas_cstr(arguments[0], argument_lens[0], "+cell=")){
+        if(strlen_sameas_cstr(arguments[0], argument_lens[0], "+cell=")){ // if we had types system we could ommit the stupid "cell"
 
-                lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
-                lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
+            lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
+            lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
 
-                * inst0_set = true;
-                * inst0 = lang$ic$copy$cell$0x00;
-                * inst0_arg = var_addr;
+            * inst0_set = true;
+            * inst0 = lang$ic$copy$cell$0x00;
+            * inst0_arg = var_addr;
 
-                * inst1_set = true;
-                * inst1 = lang$ic$add$0x00$cell;
-                * inst1_arg = arg_value;
+            * inst1_set = true;
+            * inst1 = lang$ic$add$0x00$cell;
+            * inst1_arg = arg_value;
 
-                * inst2_set = true;
-                * inst2 = lang$ic$copy$0x00$cell;
-                * inst2_arg = var_addr;
+            * inst2_set = true;
+            * inst2 = lang$ic$copy$0x00$cell;
+            * inst2_arg = var_addr;
 
-                return err$ok;
+            return err$ok;
 
-            }else if(strlen_sameas_cstr(arguments[0], argument_lens[0], "-cell=")){
-                
-                lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
-                lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
+        }else if(strlen_sameas_cstr(arguments[0], argument_lens[0], "-cell=")){
+            
+            lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
+            lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
 
-                * inst0_set = true;
-                * inst0 = lang$ic$copy$cell$0x00;
-                * inst0_arg = var_addr;
+            * inst0_set = true;
+            * inst0 = lang$ic$copy$cell$0x00;
+            * inst0_arg = var_addr;
 
-                * inst1_set = true;
-                * inst1 = lang$ic$sub$0x00$cell;
-                * inst1_arg = arg_value;
+            * inst1_set = true;
+            * inst1 = lang$ic$sub$0x00$cell;
+            * inst1_arg = arg_value;
 
-                * inst2_set = true;
-                * inst2 = lang$ic$copy$0x00$cell;
-                * inst2_arg = var_addr;
+            * inst2_set = true;
+            * inst2 = lang$ic$copy$0x00$cell;
+            * inst2_arg = var_addr;
 
-                return err$ok;
-
-            }
-
-            out$cstr("unknown operator `");
-            out$strlen(arguments[0], argument_lens[0]);
-            out$cstr("`\n");
-            return err$err;
+            return err$ok;
 
         }
 
-        out$cstr("bad number of arguments\n");
+        out$cstr("unknown operator `");
+        out$strlen(arguments[0], argument_lens[0]);
+        out$cstr("`\n");
         return err$err;
 
     }while(false);
