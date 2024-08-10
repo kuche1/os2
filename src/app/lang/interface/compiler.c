@@ -1,15 +1,107 @@
 
 #define lang$program_data_t$init_from_cstr$MAX_NUMBER_OF_VARS 10
 
+#define lang$CHECK_TYPE_SAME_OR_ERR(base_type, comparing_type){ \
+    if(base_type != comparing_type){ \
+        out$cstr("type missmatch: base=`"); \
+        lang$print_type(base_type); \
+        out$cstr("` comaring=`"); \
+        lang$print_type(comparing_type); \
+        out$cstr("`: comparing needs to be the same as base\n"); \
+        return err$err; \
+    } \
+}
+
+#define lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(base_type, comparing_type){ \
+    if((comparing_type != lang$VT_UNDECIDED) && (base_type != comparing_type)){ \
+        out$cstr("type missmatch: base=`"); \
+        lang$print_type(base_type); \
+        out$cstr("` comaring=`"); \
+        lang$print_type(comparing_type); \
+        out$cstr("`: comparing needs to be the same as base or undecided\n"); \
+        return err$err; \
+    } \
+}
+
+#define lang$CHECK_TYPE_PTR_OR_ERR(type){ \
+    if(!lang$is_ptr_type(type)){ \
+        out$cstr("pointer type required, instead got `"); \
+        lang$print_type(type); \
+        out$cstr("`\n"); \
+        return err$err; \
+    } \
+}
+
+typedef enum{
+    lang$VT_UNDECIDED,
+    lang$VT_CHAR,
+    lang$VT_PTR_CHAR,
+}lang$var_type_t;
+
+void lang$print_type(lang$var_type_t type){
+    switch(type){
+        case lang$VT_UNDECIDED:
+            out$cstr("undecided");
+            break;
+        case lang$VT_CHAR:
+            out$cstr("char");
+            break;
+        case lang$VT_PTR_CHAR:
+            out$cstr("ptr-char");
+            break;
+    }
+}
+
+bool lang$is_ptr_type(lang$var_type_t type){
+    switch(type){
+        case lang$VT_UNDECIDED:
+        case lang$VT_CHAR:
+            return false;
+        case lang$VT_PTR_CHAR:
+            return true;
+    }
+    out$cstr("unreachable\n");
+    return false; // unreachable
+}
+
+err_t lang$ptr_type_of(lang$var_type_t type, lang$var_type_t * out){
+    switch(type){
+        case lang$VT_UNDECIDED:
+            return err$err;
+        case lang$VT_CHAR:
+            * out = lang$VT_PTR_CHAR;
+            return err$ok;
+        case lang$VT_PTR_CHAR:
+            return err$err;
+    }
+    out$cstr("unreachable\n");
+    return err$err; // unreachable
+}
+
+err_t lang$strlen_to_type(char * str, size_t str_len, lang$var_type_t * type){
+    if(strlen_sameas_cstr(str, str_len, "undecided")){
+        * type = lang$VT_UNDECIDED;
+    }else if(strlen_sameas_cstr(str, str_len, "char")){
+        * type = lang$VT_CHAR;
+    }else if(strlen_sameas_cstr(str, str_len, "ptr-char")){
+        * type = lang$VT_PTR_CHAR;
+    }else{
+        out$cstr("unknown type `");
+        out$strlen(str, str_len);
+        out$cstr("`\n");
+        return err$err;
+    }
+
+    return err$ok;
+}
+
 typedef struct{
     char name[lang$init_from_cstr$WORD_MAXLEN];
     size_t name_len;
 
     uint8_t addr;
 
-    // TODO we could add a new enum for variable types
-    // "plain" values would be of type "any"
-    // values given by "getchar" should be "char"
+    lang$var_type_t type;
 }lang$varnamelen_addr_t;
 
 typedef struct{
@@ -24,7 +116,11 @@ void lang$compiler_t$init(lang$compiler_t * ctx){
     ctx->next_var_addr = 0x10;
 }
 
-err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_len){
+err_t lang$compiler_t$add_var(
+    lang$compiler_t * ctx,
+    char * name, size_t name_len,
+    lang$var_type_t type
+){
 
     for(size_t idx=0; idx<ctx->vars_len; ++idx){
         if(strlen_sameas_strlen(name, name_len, ctx->vars[idx].name, ctx->vars[idx].name_len)){
@@ -53,6 +149,7 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
     }
     ctx->vars[ctx->vars_len].name_len = name_len;
     ctx->vars[ctx->vars_len].addr = ctx->next_var_addr;
+    ctx->vars[ctx->vars_len].type = type;
 
     ctx->vars_len += 1;
     ctx->next_var_addr += 1;
@@ -60,11 +157,16 @@ err_t lang$compiler_t$add_var(lang$compiler_t * ctx, char * name, size_t name_le
     return err$ok;
 }
 
-err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_len, uint8_t * out_var_addr){
+err_t lang$compiler_t$find_var(
+    lang$compiler_t * ctx,
+    char * name, size_t name_len,
+    uint8_t * out_addr, lang$var_type_t * * out_type
+){
 
     for(size_t idx=0; idx<ctx->vars_len; ++idx){
         if(strlen_sameas_strlen(name, name_len, ctx->vars[idx].name, ctx->vars[idx].name_len)){
-            * out_var_addr = ctx->vars[idx].addr;
+            * out_addr = ctx->vars[idx].addr;
+            * out_type = & ctx->vars[idx].type;
             return err$ok;
         }
     }
@@ -76,16 +178,18 @@ err_t lang$compiler_t$find_var(lang$compiler_t * ctx, char * name, size_t name_l
 err_t lang$compiler_t$get_arg_value(
     lang$compiler_t * ctx,
     char * arg, size_t arg_len,
-    uint8_t * out_value
+    uint8_t * out_value, lang$var_type_t * out_type
 ){
     {
         err_t err = strlen_to_u8(arg, arg_len, out_value);
         if(!err){
+            * out_type = lang$VT_UNDECIDED;
             return err$ok;
         }
     }
 
-    err_t err = lang$compiler_t$find_var(ctx, arg, arg_len, out_value);
+    lang$var_type_t * addr_variable_type;
+    err_t err = lang$compiler_t$find_var(ctx, arg, arg_len, out_value, &addr_variable_type);
 
     if(err){
         out$cstr("could not determine value of argument `");
@@ -93,6 +197,8 @@ err_t lang$compiler_t$get_arg_value(
         out$cstr("`\n");
         return err$err;
     }
+
+    * out_type = * addr_variable_type;
 
     return err$ok;
 }
@@ -116,36 +222,93 @@ err_t lang$compiler_t$compile_instruction(
     // out$strlen(inst, inst_len);
     // out$cstr("`]\n");
 
-    // only compile directive
+    // compiler directive
 
     if(strlen_sameas_cstr(inst, inst_len, "var")){
+
         if(arguments_len != 1){
-            out$cstr("bad number of arguments (a)\n");
+            out$cstr("bad number of arguments (a)\n"); // TODO this message shouldnt be in 3 places
             return err$err;
         }
-        return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0]);
+        return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0], lang$VT_UNDECIDED);
+
+    }else if(strlen_sameas_cstr(inst, inst_len, "cast")){
+
+        if(arguments_len != 2){
+            out$cstr("bad number of arguments (d)\n");
+            return err$err;
+        }
+
+        uint8_t var_addr;
+        lang$var_type_t * addr_var_type;
+        {
+            err_t err = lang$compiler_t$find_var(ctx, arguments[0], argument_lens[0], &var_addr, &addr_var_type);
+            if(err){
+                out$cstr("no such variable exists `");
+                out$strlen(arguments[0], argument_lens[0]);
+                out$cstr("`\n");
+                return err$err;
+            }
+        }
+
+        lang$var_type_t cast_to_regular;
+        if(lang$strlen_to_type(arguments[1], argument_lens[1], &cast_to_regular)){
+            return err$err;
+        }
+
+        lang$var_type_t cast_to_pointer;
+        if(lang$ptr_type_of(cast_to_regular, &cast_to_pointer)){
+            out$cstr("internal error related to ptrs\n");
+            return err$err;
+        }
+
+        * addr_var_type = cast_to_pointer;
+
+        return err$ok;
+
     }
 
-    // set variable value
+    // modify variable value
     // note that this is going to fuck you over if some
     // retard has overwritten certain addresses as variable names
 
     do{
         uint8_t var_addr;
+        lang$var_type_t * addr_var_type;
         {
-            err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, &var_addr);
+            err_t err = lang$compiler_t$find_var(ctx, inst, inst_len, &var_addr, &addr_var_type);
             if(err){
                 break;
             }
         }
 
-        if(arguments_len == 1){
+        if(arguments_len == 1){ // variable assignment
+
+            // special assignment case
+
+            if(strlen_sameas_cstr(arguments[0], argument_lens[0], "$getchar")){
+                lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(lang$VT_PTR_CHAR, *addr_var_type);
+                * addr_var_type = lang$VT_PTR_CHAR;
+                * inst0_set = true;
+                * inst0 = lang$ic$in$cell;
+                * inst0_arg = var_addr;
+                return err$ok;
+            }
+
+            // regular assignment case
 
             uint8_t arg_value;
-            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+            lang$var_type_t arg_type;
+            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
             if(err){
                 return err;
             }
+
+            // if((arg_type != lang$VT_UNDECIDED) && (*addr_var_type != arg_type)){
+            //     out$cstr("cannot assign missmatched type to variable");
+            //     return err$err;
+            // }
+            lang$CHECK_TYPE_SAME_OR_UNDECIDED_OR_ERR(*addr_var_type, arg_type);
     
             * inst0_set = true;
             * inst0 = lang$ic$copy$arg$0x00;
@@ -162,13 +325,17 @@ err_t lang$compiler_t$compile_instruction(
         if(arguments_len == 2){
 
             uint8_t arg_value;
-            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value);
+            lang$var_type_t arg_type;
+            err_t err = lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type);
             if(err){
                 return err;
             }
 
             // if we had types system we could ommit the stupid "cell"
             if(strlen_sameas_cstr(arguments[0], argument_lens[0], "+cell=")){
+
+                lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
+                lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
 
                 * inst0_set = true;
                 * inst0 = lang$ic$copy$cell$0x00;
@@ -184,10 +351,11 @@ err_t lang$compiler_t$compile_instruction(
 
                 return err$ok;
 
-            }
-            
-            if(strlen_sameas_cstr(arguments[0], argument_lens[0], "-cell=")){
+            }else if(strlen_sameas_cstr(arguments[0], argument_lens[0], "-cell=")){
                 
+                lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
+                lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
+
                 * inst0_set = true;
                 * inst0 = lang$ic$copy$cell$0x00;
                 * inst0_arg = var_addr;
@@ -224,7 +392,8 @@ err_t lang$compiler_t$compile_instruction(
     }
 
     uint8_t arg_value;
-    err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value);
+    lang$var_type_t arg_type;
+    err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
     if(err){
         return err;
     }
@@ -232,19 +401,16 @@ err_t lang$compiler_t$compile_instruction(
     * inst0_arg = arg_value;
 
     if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
+        // will print anything, no matter what type
         * inst0_set = true;
         * inst0 = lang$ic$out$arg;
         return err$ok;
     }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
+        lang$CHECK_TYPE_PTR_OR_ERR(arg_type);
         * inst0_set = true;
         * inst0 = lang$ic$out$cell;
         return err$ok;
-    }else if(strlen_sameas_cstr(inst, inst_len, "in$cell")){
-        * inst0_set = true;
-        * inst0 = lang$ic$in$cell;
-        return err$ok;
     }
-
     // unknown
 
     out$cstr("unknown instruction `");

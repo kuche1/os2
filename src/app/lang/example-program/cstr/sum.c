@@ -8,15 +8,16 @@
 "out$arg 58\n"
 "out$arg 10\n"
 "var a\n"
-"in$cell a\n"
+"a $getchar\n"
 
 "out$arg 98\n"
 "out$arg 58\n"
 "out$arg 10\n"
 "var b\n"
-"in$cell b\n"
+"b $getchar\n"
 
 "var ascii_0\n"
+"cast ascii_0 char\n"
 "ascii_0 48\n"
 
 "a -cell= ascii_0\n"
