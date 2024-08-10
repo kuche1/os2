@@ -227,12 +227,6 @@ err_t lang$compiler_t$compile_instruction(
     * inst1_set = false;
     * inst2_set = false;
 
-    // debug
-
-    // out$cstr("[dbg: processing instruction `");
-    // out$strlen(inst, inst_len);
-    // out$cstr("`]\n");
-
     // compiler directive
 
     if(strlen_sameas_cstr(inst, inst_len, "var")){
