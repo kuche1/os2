@@ -329,7 +329,6 @@ err_t lang$compiler_t$compile_instruction(
             if(arg_type == lang$VT_UNDECIDED){
                 * inst0 = lang$ic$copy$arg$0x00;
             }else if(arg_type == *addr_var_type){
-                ASSERT(lang$is_ptr_type(arg_type), "f");
                 * inst0 = lang$ic$copy$cell$0x00;
             }
             * inst0_arg = arg_value;
