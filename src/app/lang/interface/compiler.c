@@ -1,9 +1,11 @@
 
-#define lang$program_data_t$init_from_cstr$MAX_NUMBER_OF_VARS 10
+#define lang$program_data_t$init_from_cstr$MAX_NUMBER_OF_VARS 20
 
-#define lang$CHECK_NARGS_OR_ERR(required_nargs, actual_nargs){ \
+#define lang$CHECK_NARGS_OR_ERR(required_nargs, actual_nargs, cstr_identifier){ \
     if(required_nargs != actual_nargs){ \
-        out$cstr("bad number of arguments: required=`"); \
+        out$cstr("bad number of arguments ("); \
+        out$cstr(cstr_identifier); \
+        out$cstr("): required=`"); \
         out$size(required_nargs); \
         out$cstr("` actual=`"); \
         out$size(actual_nargs); \
@@ -231,12 +233,13 @@ err_t lang$compiler_t$compile_instruction(
 
     if(strlen_sameas_cstr(inst, inst_len, "var")){
 
-        lang$CHECK_NARGS_OR_ERR(1, arguments_len);
+        // TODO? make sure it's 0
+        lang$CHECK_NARGS_OR_ERR(1, arguments_len, "a");
         return lang$compiler_t$add_var(ctx, arguments[0], argument_lens[0], lang$VT_UNDECIDED);
 
     }else if(strlen_sameas_cstr(inst, inst_len, "cast")){
 
-        lang$CHECK_NARGS_OR_ERR(2, arguments_len);
+        lang$CHECK_NARGS_OR_ERR(2, arguments_len, "b");
 
         uint8_t var_addr;
         lang$var_type_t * addr_var_type;
@@ -281,7 +284,7 @@ err_t lang$compiler_t$compile_instruction(
             }
         }
 
-        lang$CHECK_NARGS_OR_ERR(2, arguments_len);
+        lang$CHECK_NARGS_OR_ERR(2, arguments_len, "c");
 
         if(strlen_sameas_cstr(arguments[0], argument_lens[0], "=")){
 
@@ -325,8 +328,18 @@ err_t lang$compiler_t$compile_instruction(
         if(err){
             return err;
         }
+        
+        bool is_plusequ = strlen_sameas_cstr(arguments[0], argument_lens[0], "+=");
+        bool is_minuseq = strlen_sameas_cstr(arguments[0], argument_lens[0], "-=");
+        bool is_muleq = strlen_sameas_cstr(arguments[0], argument_lens[0], "*=");
+        bool is_diveq = strlen_sameas_cstr(arguments[0], argument_lens[0], "/=");
 
-        if(strlen_sameas_cstr(arguments[0], argument_lens[0], "+cell=")){ // if we had types system we could ommit the stupid "cell"
+        if(
+            is_plusequ ||
+            is_minuseq ||
+            is_muleq ||
+            is_diveq
+        ){
 
             lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
             lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
@@ -336,27 +349,18 @@ err_t lang$compiler_t$compile_instruction(
             * inst0_arg = var_addr;
 
             * inst1_set = true;
-            * inst1 = lang$ic$add$0x00$cell;
             * inst1_arg = arg_value;
-
-            * inst2_set = true;
-            * inst2 = lang$ic$copy$0x00$cell;
-            * inst2_arg = var_addr;
-
-            return err$ok;
-
-        }else if(strlen_sameas_cstr(arguments[0], argument_lens[0], "-cell=")){
-            
-            lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
-            lang$CHECK_TYPE_SAME_OR_ERR(*addr_var_type, arg_type);
-
-            * inst0_set = true;
-            * inst0 = lang$ic$copy$cell$0x00;
-            * inst0_arg = var_addr;
-
-            * inst1_set = true;
-            * inst1 = lang$ic$sub$0x00$cell;
-            * inst1_arg = arg_value;
+            if(is_plusequ){
+                * inst1 = lang$ic$add$0x00$cell;
+            }else if(is_minuseq){
+                * inst1 = lang$ic$sub$0x00$cell;
+            }else if(is_muleq){
+                * inst1 = lang$ic$mul$0x00$cell;
+            }else if(is_diveq){
+                * inst1 = lang$ic$div$0x00$cell;
+            }else{
+                UNREACHABLE("a");
+            }
 
             * inst2_set = true;
             * inst2 = lang$ic$copy$0x00$cell;
@@ -373,30 +377,81 @@ err_t lang$compiler_t$compile_instruction(
 
     }while(false);
 
-    // actual instruction
-
-    lang$CHECK_NARGS_OR_ERR(1, arguments_len);
-
-    uint8_t arg_value;
-    lang$var_type_t arg_type;
-    err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
-    if(err){
-        return err;
-    }
-
-    * inst0_arg = arg_value;
+    // instruction
 
     if(strlen_sameas_cstr(inst, inst_len, "out$arg")){
+
+        lang$CHECK_NARGS_OR_ERR(1, arguments_len, "d");
+
+        uint8_t arg_value;
+        lang$var_type_t arg_type;
+        err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
+        if(err){
+            return err;
+        }
+
         // will print anything, no matter what type
         * inst0_set = true;
         * inst0 = lang$ic$out$arg;
+        * inst0_arg = arg_value;
+
         return err$ok;
+
     }else if(strlen_sameas_cstr(inst, inst_len, "out$cell")){
+
+        lang$CHECK_NARGS_OR_ERR(1, arguments_len, "e");
+
+        uint8_t arg_value;
+        lang$var_type_t arg_type;
+        err_t err = lang$compiler_t$get_arg_value(ctx, arguments[0], argument_lens[0], &arg_value, &arg_type);
+        if(err){
+            return err;
+        }
+
         lang$CHECK_TYPE_PTR_OR_ERR(arg_type);
         * inst0_set = true;
         * inst0 = lang$ic$out$cell;
+        * inst0_arg = arg_value;
+
         return err$ok;
+
+    }else if(strlen_sameas_cstr(inst, inst_len, "ifskip")){
+
+        out$cstr("instruction `ifskip` is bugged right now, so do not use it\n");
+        return err$err;
+
+        lang$CHECK_NARGS_OR_ERR(2, arguments_len, "f");
+
+        uint8_t var_addr;
+        lang$var_type_t * addr_var_type;
+        if(lang$compiler_t$find_var(ctx, arguments[0], argument_lens[0], &var_addr, &addr_var_type)){
+            out$cstr("[dbg: 1]\n");
+            return err$err;
+        }
+
+        lang$CHECK_TYPE_PTR_OR_ERR(*addr_var_type);
+
+        uint8_t arg_value;
+        lang$var_type_t arg_type;
+        if(lang$compiler_t$get_arg_value(ctx, arguments[1], argument_lens[1], &arg_value, &arg_type)){
+            out$cstr("[dbg: 2]\n");
+            return err$err;
+        }
+
+        lang$CHECK_TYPE_SAME_OR_ERR(lang$VT_UNDECIDED, arg_type)
+
+        * inst0_set = true;
+        * inst1 = lang$ic$copy$cell$0x00;
+        * inst1_arg = var_addr;
+
+        * inst1_set = true;
+        * inst1 = lang$ic$if$0x00$skipinst$arg;
+        * inst1_arg = arg_value;
+
+        return err$ok;
+
     }
+
     // unknown
 
     out$cstr("unknown instruction `");

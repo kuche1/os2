@@ -61,7 +61,7 @@ err_t lang$main(void){
         // #include "example-program/cstr/calc.c"
     ;
 
-    size_t bytecode_maxlen = 80;
+    size_t bytecode_maxlen = 320;
 
     uint8_t bytecode[bytecode_maxlen];
 

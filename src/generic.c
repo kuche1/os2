@@ -38,6 +38,12 @@ typedef bool err_t;
         return err$err; \
     }
 
+#define UNREACHABLE(identifier) \
+    out$cstr("unreachable code reached ("); \
+    out$cstr(identifier); \
+    out$cstr(")\n"); \
+    return err$err;
+
 ///
 ////// copy
 ///

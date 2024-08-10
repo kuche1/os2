@@ -20,10 +20,10 @@
 "cast ascii_0 char\n"
 "ascii_0 = 48\n"
 
-"a -cell= ascii_0\n"
-"b -cell= ascii_0\n"
+"a -= ascii_0\n"
+"b -= ascii_0\n"
 
-"a +cell= b\n"
+"a += b\n"
 
-"a +cell= ascii_0\n"
+"a += ascii_0\n"
 "out$cell a\n"
