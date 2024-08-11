@@ -16,6 +16,9 @@
 // we can cram in, say 64 bits, then chop the program into multiple 64bit pieces (this could
 // also remove the need to write the program length, if we insteam used a worthless instruction
 // that fills the last "block" (if needed))
+//
+// instead of having actual functions, we could make each file into a function
+// and different files would have to be called
 
 #define lang$INSTRUCTION_SIZE 2
 // 1 - the instruction
