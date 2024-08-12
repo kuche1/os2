@@ -19,6 +19,8 @@
 //
 // instead of having actual functions, we could make each file into a function
 // and different files would have to be called
+// all imports could be parsed and "loaded" at compile time, we could add another field "filename" in compiler_t
+// and use it as a prefix to differentiate the variables
 
 #define lang$INSTRUCTION_SIZE 2
 // 1 - the instruction
