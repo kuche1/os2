@@ -5,8 +5,8 @@
 
 #include "declaration.c"
 #include "generic.c"
-#include "output.c"
-#include "input.c"
+#include "out.c"
+#include "in.c"
 #include "shell.c"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
