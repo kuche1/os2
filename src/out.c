@@ -33,14 +33,14 @@ inline uint16_t out$vga_entry(unsigned char uc, uint8_t color){
 const size_t out$VGA_WIDTH = 80;
 const size_t out$VGA_HEIGHT = 25;
 
-size_t out$terminal_row; // TODO rename cur_row and cur_col
-size_t out$terminal_column;
+size_t out$cur_row;
+size_t out$cur_col;
 uint8_t out$terminal_color;
 uint16_t* out$terminal_buffer;
 
 void out$terminal_initialise(void){
-	out$terminal_row = 0;
-	out$terminal_column = 0;
+	out$cur_row = 0;
+	out$cur_col = 0;
 	out$terminal_color = out$vga_entry_color(out$VGA_COLOR_LIGHT_GREY, out$VGA_COLOR_BLACK);
 	out$terminal_buffer = (uint16_t*) 0xB8000;
 	for(size_t y = 0; y < out$VGA_HEIGHT; y++){
@@ -74,7 +74,7 @@ void out$terminal_scroll(void){
 		}
 	}
 	out$terminal_clear_line(out$VGA_HEIGHT - 1);
-	out$terminal_row -= 1;
+	out$cur_row -= 1;
 }
 
 void out$terminal_next_visible_color(void){
@@ -105,55 +105,55 @@ void out$terminal_previous_visible_color(void){
 
 void out$clear_last_char(void){
 
-	if(out$terminal_column <= 0){
+	if(out$cur_col <= 0){
 
-		if(out$terminal_row <= 0){
+		if(out$cur_row <= 0){
 
 			#if out$WHEN_SCREEN_IS_FULL_NEXT_LINE_APPEARS_FROM_THE_TOP_AND_IS_COLORED
 
 				out$terminal_previous_visible_color();
 
-				out$terminal_row = out$VGA_HEIGHT - 1;
-				out$terminal_column = out$VGA_WIDTH - 1;
+				out$cur_row = out$VGA_HEIGHT - 1;
+				out$cur_col = out$VGA_WIDTH - 1;
 
 			#endif
 
 
 		}else{
 
-			out$terminal_row -= 1;
-			out$terminal_column = out$VGA_WIDTH - 1;
+			out$cur_row -= 1;
+			out$cur_col = out$VGA_WIDTH - 1;
 
 		}
 
 	}else{
 
-		out$terminal_column -= 1;
+		out$cur_col -= 1;
 
 	}
 
-	out$terminal_putentryat(' ', 0, out$terminal_column, out$terminal_row);
+	out$terminal_putentryat(' ', 0, out$cur_col, out$cur_row);
 
 }
 
 void out$nl(void){
 
-	out$terminal_column = 0;
-	out$terminal_row += 1;
+	out$cur_col = 0;
+	out$cur_row += 1;
 
 	#if out$WHEN_SCREEN_IS_FULL_NEXT_LINE_APPEARS_FROM_THE_TOP_AND_IS_COLORED
 
-		if(out$terminal_row == out$VGA_HEIGHT){
-			out$terminal_row = 0;
+		if(out$cur_row == out$VGA_HEIGHT){
+			out$cur_row = 0;
 			out$terminal_next_visible_color();
 		}
 
-		out$terminal_clear_line(out$terminal_row);
+		out$terminal_clear_line(out$cur_row);
 
 	#else
 
-		if(out$terminal_row == out$VGA_HEIGHT){
-			out$terminal_scroll(); // changes `out$terminal_row`
+		if(out$cur_row == out$VGA_HEIGHT){
+			out$terminal_scroll(); // changes `out$cur_row`
 		}
 
 	#endif
@@ -168,10 +168,10 @@ void out$ch(char ch){
 
 	}else{
 
-		out$terminal_putentryat(ch, out$terminal_color, out$terminal_column, out$terminal_row);
+		out$terminal_putentryat(ch, out$terminal_color, out$cur_col, out$cur_row);
 
-		out$terminal_column += 1;
-		if(out$terminal_column == out$VGA_WIDTH){
+		out$cur_col += 1;
+		if(out$cur_col == out$VGA_WIDTH){
 			out$nl();
 		}
 
