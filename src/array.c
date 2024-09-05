@@ -159,18 +159,18 @@ typedef struct{
     size_t len;
     size_t cap;
     char * data;
-}arr_char_t; // TODO rename to `arr$char`, alongside all other fncs
+}arr$s8;
 
-#define arr$char_t$INIT(var_name, capacity) \
+#define arr$s8$INIT(var_name, capacity) \
     char var_name ## _data [capacity]; \
-    arr_char_t var_name ## _struct = { \
+    arr$s8 var_name ## _struct = { \
         .len = 0, \
         .cap = capacity, \
         .data = var_name ## _data, \
     }; \
-    arr_char_t * var_name = & var_name ## _struct;
+    arr$s8 * var_name = & var_name ## _struct;
 
-err_t arr$char_t$push(arr_char_t * arr, char data){ \
+err_t arr$s8$push(arr$s8 * arr, char data){ \
     if(arr->len >= arr->cap){
         return err$err;
     }
@@ -178,14 +178,14 @@ err_t arr$char_t$push(arr_char_t * arr, char data){ \
     return err$ok;
 }
 
-void arr$char_t$del_last(arr_char_t * arr){
+void arr$s8$del_last(arr$s8 * arr){
     if(arr->len <= 0){
         return;
     }
     arr->len -= 1;
 }
 
-err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
+err_t arr$s8$pop_head(arr$s8 * arr, char * out_popped_item){
     if(arr->len <= 0){
         return err$err;
     }
@@ -201,7 +201,7 @@ err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
     return err$ok;
 }
 
-bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
+bool arr$s8$same_as$cstr(const arr$s8 * arr, const char * cstr){
 
     size_t idx = 0;
 

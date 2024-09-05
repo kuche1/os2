@@ -39,7 +39,7 @@ void shell$main(void){
 
 		out$cstr("] > ");
 
-		arr$char_t$INIT(cmd, shell$CMD_MAXLEN);
+		arr$s8$INIT(cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
 
 		last_command_return_code = err$ok;
@@ -53,36 +53,36 @@ void shell$main(void){
 		// out$size(cmd->len);
 		// out$nl();
 
-		if(arr$char_t$same_as$cstr(cmd, shell$CMD_NEXT_COLOR)){
+		if(arr$s8$same_as$cstr(cmd, shell$CMD_NEXT_COLOR)){
 
 			out$terminal_next_visible_color();
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_PREVIOUS_COLOR)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_PREVIOUS_COLOR)){
 
 			out$terminal_previous_visible_color();
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_TEST1)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_TEST1)){
 
 			out$cstr("test 12345\n");
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_TEST2)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_TEST2)){
 
 			out$cstr("ts 54543543\n");
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_CALCULATOR)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_CALCULATOR)){
 
 			last_command_return_code = calc$main();
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_LANG)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_LANG)){
 
 			last_command_return_code = lang$main();
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_SSH)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_SSH)){
 
 			out$cstr("no internet connection\n");
 			last_command_return_code = err$err;
 
-		}else if(arr$char_t$same_as$cstr(cmd, shell$CMD_EXIT)){
+		}else if(arr$s8$same_as$cstr(cmd, shell$CMD_EXIT)){
 
 			break;
 

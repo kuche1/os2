@@ -161,7 +161,7 @@ void out$strlen(const char * data, size_t len){
 	}
 }
 
-void out$str(arr_char_t * str){
+void out$str(arr$s8 * str){
 	for(size_t i=0; i<str->len; ++i){
 		out$ch(str->data[i]);
 	}

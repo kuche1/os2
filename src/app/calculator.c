@@ -15,7 +15,7 @@ get_new_input:
 
     out$cstr("Enter equasion: ");
 
-    arr$char_t$INIT(equ, calc$EQUASION_MAXLEN);
+    arr$s8$INIT(equ, calc$EQUASION_MAXLEN);
     in$line(equ);
 
     int a = 0;
@@ -27,7 +27,7 @@ get_new_input:
     while(equ->len > 0){
 
         char head;
-        err_t empty = arr$char_t$pop_head(equ, &head);
+        err_t empty = arr$s8$pop_head(equ, &head);
 
         if(empty){
             return err$err;

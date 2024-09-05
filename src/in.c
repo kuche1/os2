@@ -268,7 +268,7 @@ char in$ch(void){
     }
 }
 
-void in$line(arr_char_t * line){
+void in$line(arr$s8 * line){
 
     while(true){
 
@@ -281,13 +281,13 @@ void in$line(arr_char_t * line){
 
         if(ch == '\b'){
             if(line->len > 0){
-                arr$char_t$del_last(line);
+                arr$s8$del_last(line);
                 out$clear_last_char();
             }
             continue;
         }
 
-        err_t err = arr$char_t$push(line, ch);
+        err_t err = arr$s8$push(line, ch);
 
         if(err){
             // TODO I would like to make this more interactive,
