@@ -1,4 +1,7 @@
 
+// those are the unreadable but generic definitions
+/*
+
 ///
 ////// struct/fnc generators
 ///
@@ -149,3 +152,84 @@ bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 // bool arr$arr_char_t$push$cstr(arr_arr_char_t * arr, char * data){
 //     ...
 // }
+
+*/
+
+typedef struct{
+    size_t len;
+    size_t cap;
+    char * data;
+}arr_char_t; // TODO rename to `arr$char`, alongside all other fncs
+
+#define arr$char_t$INIT(var_name, capacity) \
+    char var_name ## _data [capacity]; \
+    arr_char_t var_name ## _struct = { \
+        .len = 0, \
+        .cap = capacity, \
+        .data = var_name ## _data, \
+    }; \
+    arr_char_t * var_name = & var_name ## _struct;
+
+err_t arr$char_t$push(arr_char_t * arr, char data){ \
+    if(arr->len >= arr->cap){
+        return err$err;
+    }
+    arr->data[arr->len++] = data;
+    return err$ok;
+}
+
+void arr$char_t$del_last(arr_char_t * arr){
+    if(arr->len <= 0){
+        return;
+    }
+    arr->len -= 1;
+}
+
+err_t arr$char_t$pop_head(arr_char_t * arr, char * out_popped_item){
+    if(arr->len <= 0){
+        return err$err;
+    }
+    
+    * out_popped_item = arr->data[0];
+
+    for(size_t i=1; i<arr->len; ++i){
+        arr->data[i-1] = arr->data[i];
+    }
+
+    arr->len -= 1;
+
+    return err$ok;
+}
+
+bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
+
+    size_t idx = 0;
+
+    for(;; idx+=1){
+
+        char c_ch = cstr[idx];
+
+        bool last_c = c_ch == 0;
+        bool last_arr = arr->len == idx;
+
+        if(last_c != last_arr){
+            // one is done and the other is not
+            return false;
+        }
+
+        if(last_c){
+            // they're both done
+            return true;
+        }
+
+        // they both are not done
+
+        char arr_ch = arr->data[idx];
+
+        if(c_ch != arr_ch){
+            return false;
+        }
+
+    }
+
+}

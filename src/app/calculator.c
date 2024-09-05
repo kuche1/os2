@@ -15,7 +15,7 @@ get_new_input:
 
     out$cstr("Enter equasion: ");
 
-    arr$INIT(char_t, equ, calc$EQUASION_MAXLEN);
+    arr$char_t$INIT(equ, calc$EQUASION_MAXLEN);
     in$line(equ);
 
     int a = 0;

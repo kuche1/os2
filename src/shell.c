@@ -39,7 +39,7 @@ void shell$main(void){
 
 		out$cstr("] > ");
 
-		arr$INIT(char_t, cmd, shell$CMD_MAXLEN);
+		arr$char_t$INIT(cmd, shell$CMD_MAXLEN);
 		in$line(cmd);
 
 		last_command_return_code = err$ok;
