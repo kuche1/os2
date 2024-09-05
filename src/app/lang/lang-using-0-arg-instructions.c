@@ -51,7 +51,7 @@ err_t lang$inst$add_1_to_0x02(lang$program_data_t * ctx){
 
 err_t lang$inst$copy_0x01_to_addr0x02(lang$program_data_t * ctx){
     size_t addr = ctx->mem[0x02];
-    if(addr >= LENOF(ctx->mem)){
+    if(addr >= CAPOF(ctx->mem)){
         return err$err;
     }
     ctx->mem[addr] = ctx->mem[0x01];
@@ -60,7 +60,7 @@ err_t lang$inst$copy_0x01_to_addr0x02(lang$program_data_t * ctx){
 
 err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
     size_t addr = ctx->mem[0x02];
-    if(addr >= LENOF(ctx->mem)){
+    if(addr >= CAPOF(ctx->mem)){
         return err$err;
     }
     ctx->mem[0x01] = ctx->mem[addr];
@@ -69,7 +69,7 @@ err_t lang$inst$copy_addr0x02_to_0x01(lang$program_data_t * ctx){
 
 err_t lang$inst$0x01_add_addr0x02_to_0x01(lang$program_data_t * ctx){
     size_t addr = ctx->mem[0x02];
-    if(addr >= LENOF(ctx->mem)){
+    if(addr >= CAPOF(ctx->mem)){
         return err$err;
     }
     ctx->mem[0x01] = ctx->mem[0x01] + ctx->mem[addr];
@@ -157,7 +157,7 @@ typedef enum{
 ///
 
 void lang$program_data_t$init(lang$program_data_t * ctx, lang$instruction_t * code, size_t code_len){
-    for(size_t i=0; i<LENOF(ctx->mem); ++i){
+    for(size_t i=0; i<CAPOF(ctx->mem); ++i){
         ctx->mem[i] = 0;
     }
 
@@ -180,7 +180,7 @@ err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instr
 
         lang$instruction_t inst = ctx->code[inst_idx];
 
-        if(inst >= LENOF(lang$instruction_lookup)){
+        if(inst >= CAPOF(lang$instruction_lookup)){
             * out_execution_finished = true;
             return err$err;
         }
@@ -335,7 +335,7 @@ err_t lang$main(void){
 
     lang$program_data_t context;
     lang$program_data_t * ctx = & context;
-    lang$program_data_t$init(ctx, code, LENOF(code));
+    lang$program_data_t$init(ctx, code, CAPOF(code));
 
     while(true){
 

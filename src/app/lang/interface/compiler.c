@@ -165,7 +165,7 @@ err_t lang$compiler_t$add_var(
         }
     }
 
-    if(ctx->vars_len >= LENOF(ctx->vars)){
+    if(ctx->vars_len >= CAPOF(ctx->vars)){
         out$cstr("not enough space for new var `");
         out$strlen(name, name_len);
         out$cstr("`\n");

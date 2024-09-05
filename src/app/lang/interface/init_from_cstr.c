@@ -37,10 +37,10 @@ err_t lang$program_data_t$init_from_cstr$(
     char word[lang$init_from_cstr$WORD_MAXLEN];
     size_t word_len = 0;
 
-    char inst[LENOF(word)];
+    char inst[CAPOF(word)];
     size_t inst_len = 0;
 
-    char arguments[lang$init_from_cstr$INST_MAX_ARGS][LENOF(word)];
+    char arguments[lang$init_from_cstr$INST_MAX_ARGS][CAPOF(word)];
     size_t argument_lens[lang$init_from_cstr$INST_MAX_ARGS];
     size_t arguments_len = 0;
 
@@ -84,7 +84,7 @@ err_t lang$program_data_t$init_from_cstr$(
 
             if(!word_copied){
 
-                if(arguments_len >= LENOF(arguments)){
+                if(arguments_len >= CAPOF(arguments)){
                     out$cstr("too many arguments\n");
                     return err$err;
                 }
@@ -210,7 +210,7 @@ err_t lang$program_data_t$init_from_cstr$(
 
         }else{
 
-            if(word_len >= LENOF(word)){
+            if(word_len >= CAPOF(word)){
                 out$cstr("keyword is too long\n");
                 return err$err;
             }

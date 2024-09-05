@@ -53,7 +53,7 @@ typedef struct{
 
 err_t lang$main(void){
 
-    COMPTIME_ASSERT(lang$ic$len == LENOF(lang$instruction_lookup));
+    COMPTIME_ASSERT(lang$ic$len == CAPOF(lang$instruction_lookup));
     // this only reason this is here is because it doesn't work in global scope
 
     lang$program_data_t context;
@@ -84,7 +84,7 @@ err_t lang$main(void){
     // ;
 
     // {
-    //     err_t err = lang$program_data_t$init_from_instruction_code(&context, bytecode, LENOF(bytecode));
+    //     err_t err = lang$program_data_t$init_from_instruction_code(&context, bytecode, CAPOF(bytecode));
     //     if(err){
     //         return err;
     //     }

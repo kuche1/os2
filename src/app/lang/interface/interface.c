@@ -98,7 +98,7 @@
 }
 
 err_t lang$program_data_t$init_from_instruction_code(lang$program_data_t * ctx, uint8_t * code, size_t code_len){
-    for(size_t i=0; i<LENOF(ctx->mem); ++i){
+    for(size_t i=0; i<CAPOF(ctx->mem); ++i){
         ctx->mem[i] = 0;
     }
 
@@ -132,7 +132,7 @@ err_t lang$program_data_t$exec(lang$program_data_t * ctx, size_t number_of_instr
         lang$instruction_code_t inst = ctx->code[ctx->instruction_index++];
         uint8_t arg = ctx->code[ctx->instruction_index++];
 
-        if(inst >= LENOF(lang$instruction_lookup)){
+        if(inst >= CAPOF(lang$instruction_lookup)){
             * out_execution_finished = true;
             return err$err;
         }

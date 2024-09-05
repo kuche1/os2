@@ -8,13 +8,11 @@
     ( (void) sizeof(char[1 - 2*!(cond)]) )
 
 ///
-////// lenof
+////// capof
 ///
 
-// TODO rename to CAPOF
-#define LENOF(arr) \
+#define CAPOF(arr) \
     ( sizeof(arr) / sizeof(*arr) )
-
 
 ///
 ////// error

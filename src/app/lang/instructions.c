@@ -5,7 +5,7 @@ err_t lang$if$out$arg(__attribute__((unused)) lang$program_data_t * ctx, uint8_t
 }
 
 err_t lang$if$out$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     uint8_t value = ctx->mem[arg];
@@ -14,7 +14,7 @@ err_t lang$if$out$cell(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$in$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     char ch = in$ch();
@@ -23,7 +23,7 @@ err_t lang$if$in$cell(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$copy$cell$0x00(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
@@ -32,7 +32,7 @@ err_t lang$if$copy$cell$0x00(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$copy$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     uint8_t val = ctx->mem[0x00];
@@ -41,7 +41,7 @@ err_t lang$if$copy$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$add$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
@@ -67,7 +67,7 @@ err_t lang$if$if$0x00$skipinst$arg(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$sub$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     ctx->mem[0x00] -= ctx->mem[arg];
@@ -75,7 +75,7 @@ err_t lang$if$sub$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
 }
 
 err_t lang$if$mul$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     ctx->mem[0x00] *= ctx->mem[arg];
@@ -85,7 +85,7 @@ err_t lang$if$mul$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
 // TODO would probably be worth something to add another division instruction
 // that is the same, except it doesn't raise an exception in case of div by 0
 err_t lang$if$div$0x00$cell(lang$program_data_t * ctx, uint8_t arg){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     uint8_t val = ctx->mem[arg];
@@ -108,7 +108,7 @@ err_t lang$if$unreachable(__attribute__((unused)) lang$program_data_t * ctx, __a
 }
 
 err_t lang$if$not$cell(lang$program_data_t * ctx, uint8_t cell_addr){
-    // if(arg >= LENOF(ctx->mem)){
+    // if(arg >= CAPOF(ctx->mem)){
     //     return err$err;
     // }
     ctx->mem[cell_addr] = !ctx->mem[cell_addr];
