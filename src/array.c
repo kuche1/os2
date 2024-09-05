@@ -1,5 +1,84 @@
 
-// those are the unreadable but generic definitions
+typedef struct{
+    size_t len;
+    size_t cap;
+    char * data;
+}arr$s8;
+
+#define arr$s8$INIT(var_name, capacity) \
+    char var_name ## _data [capacity]; \
+    arr$s8 var_name ## _struct = { \
+        .len = 0, \
+        .cap = capacity, \
+        .data = var_name ## _data, \
+    }; \
+    arr$s8 * var_name = & var_name ## _struct;
+
+err_t arr$s8$push(arr$s8 * arr, char data){ \
+    if(arr->len >= arr->cap){
+        return err$err;
+    }
+    arr->data[arr->len++] = data;
+    return err$ok;
+}
+
+void arr$s8$del_last(arr$s8 * arr){
+    if(arr->len <= 0){
+        return;
+    }
+    arr->len -= 1;
+}
+
+err_t arr$s8$pop_head(arr$s8 * arr, char * out_popped_item){
+    if(arr->len <= 0){
+        return err$err;
+    }
+    
+    * out_popped_item = arr->data[0];
+
+    for(size_t i=1; i<arr->len; ++i){
+        arr->data[i-1] = arr->data[i];
+    }
+
+    arr->len -= 1;
+
+    return err$ok;
+}
+
+bool arr$s8$same_as$cstr(const arr$s8 * arr, const char * cstr){
+
+    size_t idx = 0;
+
+    for(;; idx+=1){
+
+        char c_ch = cstr[idx];
+
+        bool last_c = c_ch == 0;
+        bool last_arr = arr->len == idx;
+
+        if(last_c != last_arr){
+            // one is done and the other is not
+            return false;
+        }
+
+        if(last_c){
+            // they're both done
+            return true;
+        }
+
+        // they both are not done
+
+        char arr_ch = arr->data[idx];
+
+        if(c_ch != arr_ch){
+            return false;
+        }
+
+    }
+
+}
+
+// those are the old unreadable but generic definitions
 /*
 
 ///
@@ -154,82 +233,3 @@ bool arr$char_t$same_as$cstr(const arr_char_t * arr, const char * cstr){
 // }
 
 */
-
-typedef struct{
-    size_t len;
-    size_t cap;
-    char * data;
-}arr$s8;
-
-#define arr$s8$INIT(var_name, capacity) \
-    char var_name ## _data [capacity]; \
-    arr$s8 var_name ## _struct = { \
-        .len = 0, \
-        .cap = capacity, \
-        .data = var_name ## _data, \
-    }; \
-    arr$s8 * var_name = & var_name ## _struct;
-
-err_t arr$s8$push(arr$s8 * arr, char data){ \
-    if(arr->len >= arr->cap){
-        return err$err;
-    }
-    arr->data[arr->len++] = data;
-    return err$ok;
-}
-
-void arr$s8$del_last(arr$s8 * arr){
-    if(arr->len <= 0){
-        return;
-    }
-    arr->len -= 1;
-}
-
-err_t arr$s8$pop_head(arr$s8 * arr, char * out_popped_item){
-    if(arr->len <= 0){
-        return err$err;
-    }
-    
-    * out_popped_item = arr->data[0];
-
-    for(size_t i=1; i<arr->len; ++i){
-        arr->data[i-1] = arr->data[i];
-    }
-
-    arr->len -= 1;
-
-    return err$ok;
-}
-
-bool arr$s8$same_as$cstr(const arr$s8 * arr, const char * cstr){
-
-    size_t idx = 0;
-
-    for(;; idx+=1){
-
-        char c_ch = cstr[idx];
-
-        bool last_c = c_ch == 0;
-        bool last_arr = arr->len == idx;
-
-        if(last_c != last_arr){
-            // one is done and the other is not
-            return false;
-        }
-
-        if(last_c){
-            // they're both done
-            return true;
-        }
-
-        // they both are not done
-
-        char arr_ch = arr->data[idx];
-
-        if(c_ch != arr_ch){
-            return false;
-        }
-
-    }
-
-}
