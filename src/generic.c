@@ -19,7 +19,7 @@
 ///
 
 // TODO since we have standardised this, we can now make
-// some macro that prints and error message and returns
+// some macro that prints an error message and returns
 // err$err
 
 // TODO we need to find a way to declare all err_t functions

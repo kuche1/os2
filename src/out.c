@@ -190,7 +190,7 @@ void out$size(size_t data){
 void out$int(int num){
 	if(num < 0){
 		out$ch('-');
-		out$int(-num); // TODO overflow/underflow possible ?
+		out$int(-num); // TODO underflow possible
 	}
 	COMPTIME_ASSERT(sizeof(num) <= sizeof(size_t));
 	out$size((size_t) num);
