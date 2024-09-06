@@ -260,6 +260,8 @@ char in$ch(void){
 
 void in$line(arr$s8 * line){
 
+    // TODO allow cursor keys
+
     const char * buf_deficit_msg = "[there is no more space in the input buffer]";
     const size_t buf_deficit_msg_len = 38+6; // I hate this but I don't want to loose any performance using strlen
     bool buf_deficit_msg_printed = false;
