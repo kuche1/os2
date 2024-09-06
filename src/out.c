@@ -38,6 +38,18 @@ size_t out$cur_col;
 uint8_t out$terminal_color;
 uint16_t* out$terminal_buffer;
 
+// TODO actually use this
+void out$upd_vga_cur(void){
+	// https://wiki.osdev.org/Text_Mode_Cursor
+
+	size_t pos = out$cur_row * out$VGA_WIDTH + out$cur_col;
+
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
 void out$terminal_initialise(void){
 	out$cur_row = 0;
 	out$cur_col = 0;

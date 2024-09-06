@@ -18,16 +18,6 @@
 #define in$KEYBOARD_STATUS_PORT 0x64
 #define in$KEYBOARD_STATUS_MASK_OUT_BUF 0x01
 
-inline uint8_t in$inb(uint16_t port){
-    uint8_t ret;
-    __asm__ __volatile__ ("inb %1, %0" : "=a"(ret) : "Nd"(port));
-    return ret;
-}
-
-inline void in$outb(uint16_t port, uint8_t val){
-    __asm__ __volatile__ ("outb %0, %1" : : "a"(val), "Nd"(port));
-}
-
 // char in$scancode_to_ascii[] = {
 //     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', /* Backspace */
 //     '\t', /* Tab */
@@ -247,9 +237,9 @@ char in$ch(void){
 
     // Wait for a key press
     while(true){
-        status = in$inb(in$KEYBOARD_STATUS_PORT);
+        status = inb(in$KEYBOARD_STATUS_PORT);
         if(status & in$KEYBOARD_STATUS_MASK_OUT_BUF){
-            keycode = in$inb(in$KEYBOARD_DATA_PORT);
+            keycode = inb(in$KEYBOARD_DATA_PORT);
 
             // if(keycode < sizeof(in$scancode_to_ascii)){
             //     return in$scancode_to_ascii[keycode];
