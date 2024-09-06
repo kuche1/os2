@@ -260,9 +260,22 @@ char in$ch(void){
 
 void in$line(arr$s8 * line){
 
+    const char * buf_deficit_msg = "[there is no more space in the input buffer]";
+    const size_t buf_deficit_msg_len = 38+6; // I hate this but I don't want to loose any performance using strlen
+    bool buf_deficit_msg_printed = false;
+
     while(true){
 
         char ch = in$ch();
+
+        if(buf_deficit_msg_printed){
+            buf_deficit_msg_printed = false;
+
+            // this isn't optimal
+            for(size_t i=0; i<buf_deficit_msg_len; ++i){
+                out$clear_last_char();
+            }
+        }
 
         if(ch == '\n'){
             out$nl();
@@ -280,9 +293,10 @@ void in$line(arr$s8 * line){
         err_t err = arr$s8$push(line, ch);
 
         if(err){
-            // TODO I would like to make this more interactive,
-            // explaining to the user that there is not eough space
-            // in the buffer, and that he needs to edit the line
+
+            out$cstr(buf_deficit_msg);
+            buf_deficit_msg_printed = true;
+
             continue;
         }
 
