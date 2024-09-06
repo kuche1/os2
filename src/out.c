@@ -42,8 +42,8 @@ void out$enable_vga_cursor(void){
 	// https://wiki.osdev.org/Text_Mode_Cursor
 
 	// this determines the size of the cursor
-	uint8_t cursor_start_y =  0;
-	uint8_t cursor_end_y   = 15;
+	uint8_t cursor_start_y =  0 + 0;
+	uint8_t cursor_end_y   = 15 - 0;
 	// usually 0 to 15
 
 	outb(0x3D4, 0x0A);
