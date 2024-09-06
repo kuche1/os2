@@ -38,6 +38,21 @@ size_t out$cur_col;
 uint8_t out$terminal_color;
 uint16_t* out$terminal_buffer;
 
+void out$enable_vga_cursor(void){
+	// https://wiki.osdev.org/Text_Mode_Cursor
+
+	// this determines the size of the cursor
+	uint8_t cursor_start_y =  0;
+	uint8_t cursor_end_y   = 15;
+	// usually 0 to 15
+
+	outb(0x3D4, 0x0A);
+	outb(0x3D5, (uint8_t) ( (inb(0x3D5) & 0xC0) | cursor_start_y) );
+
+	outb(0x3D4, 0x0B);
+	outb(0x3D5, (uint8_t) ( (inb(0x3D5) & 0xE0) | cursor_end_y) );
+}
+
 void out$upd_vga_cur(void){
 	// https://wiki.osdev.org/Text_Mode_Cursor
 
@@ -60,6 +75,7 @@ void out$terminal_initialise(void){
 			out$terminal_buffer[index] = out$vga_entry(' ', out$terminal_color);
 		}
 	}
+	out$enable_vga_cursor();
 	out$upd_vga_cur();
 }
 
