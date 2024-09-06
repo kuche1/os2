@@ -38,7 +38,6 @@ size_t out$cur_col;
 uint8_t out$terminal_color;
 uint16_t* out$terminal_buffer;
 
-// TODO actually use this
 void out$upd_vga_cur(void){
 	// https://wiki.osdev.org/Text_Mode_Cursor
 
@@ -61,6 +60,7 @@ void out$terminal_initialise(void){
 			out$terminal_buffer[index] = out$vga_entry(' ', out$terminal_color);
 		}
 	}
+	out$upd_vga_cur();
 }
 
 void out$terminal_setcolor(uint8_t color){
@@ -74,7 +74,7 @@ void out$terminal_putentryat(char ch, uint8_t color, size_t x, size_t y){
 
 void out$terminal_clear_line(size_t y){
 	for(size_t i=0; i<out$VGA_WIDTH; ++i){
-		out$terminal_putentryat(' ', 0, i, y);
+		out$terminal_putentryat(' ', out$terminal_color, i, y);
 	}
 }
 
@@ -87,6 +87,7 @@ void out$terminal_scroll(void){
 	}
 	out$terminal_clear_line(out$VGA_HEIGHT - 1);
 	out$cur_row -= 1;
+	out$upd_vga_cur();
 }
 
 void out$terminal_next_visible_color(void){
@@ -144,7 +145,10 @@ void out$clear_last_char(void){
 
 	}
 
-	out$terminal_putentryat(' ', 0, out$cur_col, out$cur_row);
+	out$terminal_putentryat(' ', out$terminal_color, out$cur_col, out$cur_row);
+	// this actually changes the color of the cursor
+
+	out$upd_vga_cur();
 
 }
 
@@ -170,6 +174,8 @@ void out$nl(void){
 
 	#endif
 
+	out$upd_vga_cur();
+
 }
 
 void out$ch(char ch){
@@ -188,6 +194,8 @@ void out$ch(char ch){
 		}
 
 	}
+
+	out$upd_vga_cur();
 
 }
 
